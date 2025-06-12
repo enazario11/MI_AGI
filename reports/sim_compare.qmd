@@ -25,6 +25,7 @@ library(sf)
 library(here)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(wesanderson)
 source(here("functions/oxy_demand_functions.R"))
 set.seed(0904)
 
@@ -43,96 +44,274 @@ mid_atlantic_coast <- st_crop(shore, mid_atlantic_bbox)
 enviro_sim <- data.frame(lat = runif(100, min = 34, max = 42), 
                          long = runif(100, min = -77, max = -68), 
                          DO_atm = runif(100, min = 0.10, max = 0.20), 
-                         temp = runif(100, min = 12, max = 30))
+                         temp = runif(100, min = 0, max = 30))
 
 DO_thresh <- quantile(enviro_sim$DO_atm)[1]
 
-
 ```
 
-## Calculate MI and AGI for black sea bass
+## Calculate MI and AGI
+
+::: panel-tabset
+
+### Black sea bass
 
 ```{r}
 #| warning: false
-#| label: calc
+#| label: calc bass
 
 ### MI ####
-enviro_sim <- enviro_sim %>% mutate(DO_kpa = DO_atm*101.325)
-enviro_sim$mi <- MI_calc(A0 = 0.00040728, Bn = 0.01, DO_kPa = enviro_sim$DO_kpa, E0 = 0.27, kB = 0.00008617333262, T_C = enviro_sim$temp)
-hist(enviro_sim$mi)
+enviro_bass <- enviro_sim %>% mutate(DO_kpa = DO_atm*101.325)
+enviro_bass$mi <- MI_calc(A0 = 0.00040728, Bn = 0.01, DO_kPa = enviro_bass$DO_kpa, E0 = 0.27, kB = 0.00008617333262, T_C = enviro_bass$temp)
+hist(enviro_bass$mi)
 
 ### AGI ####
-enviro_sim$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_sim$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8)
-enviro_sim$agi <- enviro_sim$DO_atm/enviro_sim$agi_o2_demand
-hist(enviro_sim$agi)
-
+enviro_bass$agi <- enviro_bass$DO_atm/enviro_bass$agi_o2_demand
+hist(enviro_bass$agi)
 
 ```
 
-## Plot
+### Atlantic cod
+
+Used same simulated data for both species. Though normative temperatures would be much lower for cod than bass. Weight is average reported online. 
+
+```{r}
+#| warning: false
+#| label: calc cod
+
+### MI ####
+enviro_cod <- enviro_sim %>% mutate(DO_kpa = DO_atm*101.325)
+enviro_cod$mi <- MI_calc(A0 = 0.000000668, Bn = 0.01, DO_kPa = enviro_cod$DO_kpa, E0 = 0.42, kB = 0.00008617333262, T_C = enviro_cod$temp)
+hist(enviro_cod$mi)
+
+### AGI ####
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
+hist(enviro_cod$agi)
+
+```
+
+:::
+
+## Size explore (AGI oxygen demand, units: atm)
+
+**Linf (according to von Bertalanffy growth theory)** = NOT the maximum length of the animal. Instead, it is the length a species would reach if it continued to grow indefinitely. Horizontal asymptote of the asymptotic growth curve.  
+
+**Winf (according to Fishbase)** = A parameter of the von Bertalanffy Growth Function (VBGF), expressing the mean weight the fish of a given stock would reach if they were to grow for an infinitely long period; also: the weight corresponding to Linf. 
 
 ::: panel-tabset
-### MI
+
+### Black sea bass weight
+
+Min and max weights from the MI study
+```{r}
+#| warning: false
+#| label: W bass
+
+#max weight for species
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+hist(enviro_bass$agi_o2_demand)
+
+#min weight for species
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+hist(enviro_bass$agi_o2_demand)
+
+```
+
+### Atlantic cod weight
+
+Min and max weights used here are just for **juveniles** included in MI study. 
+```{r}
+#| warning: false
+#| label: W cod
+
+#max weight for species
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 473, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+hist(enviro_cod$agi_o2_demand)
+
+#min weight for species
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 79, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+hist(enviro_cod$agi_o2_demand)
+
+```
+
+### Black sea bass length (Winf via Linf)
+
+Min and max TL from MI study. Weights are average from MI study (Slessinger et al., 2019; 329.9 g)
+```{r}
+#| warning: false
+#| label: Winf bass
+
+#max length for species -- max weight included in MI study
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 39.8, LwA = 0.02661, LwB = 2.8)
+hist(enviro_bass$agi_o2_demand)
+
+#min length for species -- min weight included in MI study
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 22.1, LwA = 0.02661, LwB = 2.8)
+hist(enviro_bass$agi_o2_demand)
+
+```
+
+### Atlantic cod length (Winf via Linf)
+
+Min and max TLs used here are just for juveniles included in MI study. Weights are average from MI study from SMR results at 10C.
+```{r}
+#| warning: false
+#| label: Winf cod
+
+#max length for species -- max weight included in MI study
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 39, LwA = 0.005, LwB = 3.185)
+hist(enviro_cod$agi_o2_demand)
+
+#min length for species -- max weight included in MI study
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 21, LwA = 0.005, LwB = 3.185)
+hist(enviro_cod$agi_o2_demand)
+
+```
+
+:::
+
+## Calculated metabolic demand (AGI denominator) vs. empirical
+
+::: panel-tabset
+
+### Black sea bass
+
+Empirical data taken from target temperature binned averages from Slessinger et al., 2019. Sexes were mixed to calculate temperature specific averages. RMR are reported as mg O2/hr/kg. AGI-MR values are in atm. 
+```{r}
+#| warning: false
+#| label: met bass
+
+emp_bass_test <- data.frame(temp = as.numeric(c(12, 17, 22, 24, 27)), 
+                           RMR = as.numeric(c(47.68, 69.28, 94.42, 117.93, 142.5))) 
+
+emp_bass_test$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = emp_bass_test$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+
+ggplot(emp_bass_test, aes(x = RMR, y = agi_o2_demand, fill = temp)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray40") +  # 1:1 line
+  geom_point(shape = 21, size = 4, color = "black") +  
+  scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = "continuous")) +
+  theme_minimal() +
+  labs(
+    x = "RMR",
+    y = "AGI oxygen demand",
+    fill = "Temperature (°C)"
+  )
+
+```
+
+
+### Atlantic cod 
+
+Empirical data taken from target temperature binned averages from Schurmann and Steffensen 1997. Values were pulled from table 1 of the paper. RMR are reported as mg O2/hr/kg. AGI-MR values are in atm.
+```{r}
+#| warning: false
+#| label: met cod
+
+emp_cod_test <- data.frame(temp = as.numeric(c(5, 10, 15)), 
+                           SMR = as.numeric(c(35.5, 57, 78.2))) 
+
+emp_cod_test$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = emp_cod_test$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, Linf = 148, LwA = 0.005, LwB = 3.185)
+
+ggplot(emp_cod_test, aes(x = SMR, y = agi_o2_demand, fill = temp)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray40") +  # 1:1 line
+  geom_point(shape = 21, size = 4, color = "black") +  
+  scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = "continuous")) +
+  theme_minimal() +
+  labs(
+    x = "SMR",
+    y = "AGI oxygen demand",
+    fill = "Temperature (°C)"
+  )
+
+```
+
+:::
+
+
+<!--
+Scratch docs from old explore
+
 
 ```{r}
 #| warning: false
 #| label: mi_figs
 
+## Plot
+### MI
+
+## Just done for black sea bass explore
+
 #DO vs. MI
-ggplot(enviro_sim, aes(DO_kpa, mi))+
-  geom_point(size = 2)+
-  theme_tq()
-
-#temp vs. MI
-ggplot(enviro_sim, aes(temp, mi))+
-  geom_point(size = 2)+
-  theme_tq()
-
-#temp, DO, MI
-ggplot(enviro_sim, aes(temp, DO_kpa))+
-  geom_point(size = 4, aes(color = mi))+
-  theme_tq()
-
-#map
-ggplot() +
-  geom_point(data = enviro_sim, aes(x = long, y = lat, color = mi), size = 3) +
-  scale_color_viridis_c(option = "plasma", name = "AGI") +
-  geom_sf(data = mid_atlantic_coast, fill = "grey70") +
-  coord_sf(xlim = c(-77, -68), ylim = c(34.5, 42), expand = FALSE) +
-  theme_tq()
+# ggplot(enviro_sim, aes(DO_kpa, mi))+
+#   geom_point(size = 2)+
+#   theme_tq()
+# 
+# #temp vs. MI
+# ggplot(enviro_sim, aes(temp, mi))+
+#   geom_point(size = 2)+
+#   theme_tq()
+# 
+# #temp, DO, MI
+# ggplot(enviro_sim, aes(temp, DO_kpa))+
+#   geom_point(size = 4, aes(color = mi))+
+#   theme_tq()
+# 
+# #map
+# ggplot() +
+#   geom_point(data = enviro_sim, aes(x = long, y = lat, color = mi), size = 3) +
+#   scale_color_viridis_c(option = "plasma", name = "AGI") +
+#   geom_sf(data = mid_atlantic_coast, fill = "grey70") +
+#   coord_sf(xlim = c(-77, -68), ylim = c(34.5, 42), expand = FALSE) +
+#   theme_tq()
 
 
 ```
 
-### AGI
 
 ```{r}
 #| warning: false
 #| label: agi_figs
 
+### AGI
+## Just done for black sea bass explore
+
+
 #DO vs. AGI
-ggplot(enviro_sim, aes(DO_atm, agi))+
-  geom_point(size = 2)+
-  theme_tq()
-
-#temp vs. AGI
-ggplot(enviro_sim, aes(temp, agi))+
-  geom_point(size = 2)+
-  theme_tq()
-
-#temp, DO, AGI
-ggplot(enviro_sim, aes(temp, DO_atm))+
-  geom_point(size = 4, aes(color = agi))+
-  theme_tq()
-
-#map
-ggplot() +
-  geom_point(data = enviro_sim, aes(x = long, y = lat, color = agi), size = 3) +
-  scale_color_viridis_c(option = "plasma", name = "AGI") +
-  geom_sf(data = mid_atlantic_coast, fill = "grey70") +
-  coord_sf(xlim = c(-77, -68), ylim = c(34.5, 42), expand = FALSE) +
-  theme_tq()
+# ggplot(enviro_sim, aes(DO_atm, agi))+
+#   geom_point(size = 2)+
+#   theme_tq()
+# 
+# #temp vs. AGI
+# ggplot(enviro_sim, aes(temp, agi))+
+#   geom_point(size = 2)+
+#   theme_tq()
+# 
+# #temp, DO, AGI
+# ggplot(enviro_sim, aes(temp, DO_atm))+
+#   geom_point(size = 4, aes(color = agi))+
+#   theme_tq()
+# 
+# #map
+# ggplot() +
+#   geom_point(data = enviro_sim, aes(x = long, y = lat, color = agi), size = 3) +
+#   scale_color_viridis_c(option = "plasma", name = "AGI") +
+#   geom_sf(data = mid_atlantic_coast, fill = "grey70") +
+#   coord_sf(xlim = c(-77, -68), ylim = c(34.5, 42), expand = FALSE) +
+#   theme_tq()
 
 ```
-:::
+
+-->
