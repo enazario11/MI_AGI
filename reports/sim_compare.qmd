@@ -35,6 +35,14 @@ shore <- ne_download(scale = "medium", type = "land", category = "physical", ret
 mid_atlantic_bbox <- st_bbox(c(xmin = -77, xmax = -68, ymin = 34, ymax = 42), crs = st_crs(shore))
 mid_atlantic_coast <- st_crop(shore, mid_atlantic_bbox)
 
+theme_custom <- function(){
+ theme_minimal() + 
+ theme(axis.text = element_text(size = 14, color = "black"), 
+                                        axis.title = element_text(size = 16, color = "black"), 
+                                        legend.text = element_text(size = 14, color = "black"), 
+                                        legend.title = element_text(size = 16, color = "black"))
+}
+
 ```
 
 ## Simulate enviro data
@@ -45,8 +53,8 @@ mid_atlantic_coast <- st_crop(shore, mid_atlantic_bbox)
 
 enviro_sim <- data.frame(lat = runif(100, min = 34, max = 42), 
                          long = runif(100, min = -77, max = -68), 
-                         DO_atm = runif(100, min = 0.10, max = 0.20), 
-                         temp = runif(100, min = 0, max = 30))
+                         DO_atm = runif(100, min = 0.05, max = 0.21), #if set to 0, AGI values break
+                         temp = runif(100, min = 0, max = 35))
 
 DO_thresh <- quantile(enviro_sim$DO_atm)[1]
 
@@ -261,6 +269,7 @@ Empirical data taken from target temperature binned averages from Slessinger et 
 ```{r}
 #| warning: false
 #| label: met bass
+par(mfrow = c(1,1))
 
 emp_bass_test <- data.frame(temp = as.numeric(c(12, 17, 22, 24, 27)), 
                            RMR = as.numeric(c(47.68, 69.28, 94.42, 117.93, 142.5))) 
@@ -310,6 +319,78 @@ ggplot(emp_cod_test, aes(x = SMR, y = agi_o2_demand, fill = temp)) +
 
 cod_mod <- lm(agi_o2_demand ~ SMR, emp_cod_test)
 summary(cod_mod) #R2 = 1
+
+```
+
+:::
+
+
+## AGI & MI tile plots
+
+Rounded DO and temperature data to whole numbers for figures and binned them by every 3 values to reduce resolution (and empty spaces) of tile plots. 
+
+::: panel-tabset
+
+### Black sea bass
+
+```{r}
+#| warning: false
+#| label: tile bass
+#| fig-width: 15
+#| fig-height: 7
+
+enviro_bass <- enviro_bass %>% mutate(DO_whole = round(DO_kpa), temp_whole = round(temp))
+enviro_bass$temp_bin <- cut(enviro_bass$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
+enviro_bass$DO_bin <- cut(enviro_bass$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
+
+#mi plot
+mi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
+  geom_tile() + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+#agi
+agi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
+  geom_tile() + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+ggpubr::ggarrange(mi_tile, agi_tile)
+
+```
+
+
+### Atlantic cod 
+
+
+```{r}
+#| warning: false
+#| label: tile cod
+#| fig-width: 15
+#| fig-height: 7
+
+enviro_cod <- enviro_cod %>% mutate(DO_whole = round(DO_kpa), temp_whole = round(temp))
+enviro_cod$temp_bin <- cut(enviro_cod$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
+enviro_cod$DO_bin <- cut(enviro_cod$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
+
+
+#mi plot
+mi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
+  geom_tile() + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+#agi
+agi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
+  geom_tile() + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+ggpubr::ggarrange(mi_tile, agi_tile)
 
 ```
 
