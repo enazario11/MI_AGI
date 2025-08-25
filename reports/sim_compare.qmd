@@ -38,9 +38,10 @@ mid_atlantic_coast <- st_crop(shore, mid_atlantic_bbox)
 theme_custom <- function(){
  theme_minimal() + 
  theme(axis.text = element_text(size = 14, color = "black"), 
-                                        axis.title = element_text(size = 16, color = "black"), 
-                                        legend.text = element_text(size = 14, color = "black"), 
-                                        legend.title = element_text(size = 16, color = "black"))
+        axis.title = element_text(size = 16, color = "black"), 
+        legend.text = element_text(size = 14, color = "black"), 
+        legend.title = element_text(size = 16, color = "black"), 
+       plot.title = element_text(size = 16, color = "black"))
 }
 
 ```
@@ -394,4 +395,155 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 
 ```
 
+
+### MI crit
+```{r}
+#| warning: false
+#| label: tile mi crit
+#| fig-width: 15
+#| fig-height: 7
+
+#bass
+mi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_bass, mi < quantile(mi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Black sea bass") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom() 
+
+#cod
+mi_cod_1 <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_cod, mi < quantile(mi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Atlantic cod") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+ggpubr::ggarrange(mi_bass_1, mi_cod_1)
+
+```
+
+### AGI crit
+
+```{r}
+#| warning: false
+#| label: tile agi crit
+#| fig-width: 15
+#| fig-height: 7
+
+#bass
+agi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_bass, agi < quantile(agi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Black sea bass") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom() 
+
+#cod
+agi_cod_1 <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_cod, agi < quantile(agi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Atlantic cod") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+ggpubr::ggarrange(agi_bass_1, agi_cod_1)
+
+```
+
+### AGI bass sizes 
+
+```{r}
+#| warning: false
+#| label: tile agi size bass
+#| fig-width: 15
+#| fig-height: 7
+
+enviro_bass_size <- enviro_bass %>%
+  mutate(bass_lg_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
+         bass_lg_agi = DO_atm/bass_lg_demand, 
+         bass_sm_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
+         bass_sm_agi = DO_atm/bass_sm_demand)
+
+
+#bass large
+agi_bass_lg <- ggplot(enviro_bass_size, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = bass_lg_agi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_bass_size, agi < quantile(bass_lg_agi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Large black sea bass (700.4 g)") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom() 
+
+#bass small
+agi_bass_sm <- ggplot(enviro_bass_size, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = bass_sm_agi)) +
+  geom_tile() + 
+  geom_rect(data = subset(enviro_bass_size, agi < quantile(bass_sm_agi, 0.10)),
+            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
+                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
+                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
+                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 3,
+            inherit.aes = FALSE) +
+  ggtitle("Small black sea bass (193.7 g)") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom() 
+
+ggpubr::ggarrange(agi_bass_lg, agi_bass_sm)
+
+```
+
 :::
+
+## Next steps...
+
+**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish. 
