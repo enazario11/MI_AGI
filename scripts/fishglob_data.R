@@ -72,7 +72,7 @@ SameElements(unique(dat_glob_met$accepted_name), unique(met_glob_sp$sp_names)) #
 
 survey_n <- dat_glob_met %>% group_by(accepted_name, survey) %>% summarise(n = n()) #tally by species and survey unit
 
-dat_glob_met %>% group_by(accepted_name) %>% summarise(n = n()) #tally by species, removed Dentex dentex (n = 2) and Oncorhynchus mykiss (n = 1)
+dat_glob_met %>% group_by(accepted_name) %>% summarise(n = n()) %>% filter(n > 5) #tally by species, removed Dentex dentex (n = 2) and Oncorhynchus mykiss (n = 1)
 
 
 

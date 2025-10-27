@@ -14,6 +14,21 @@ editor_options:
   chunk_output_type: console
 ---
 
+**Modified Items Since August:**
+
+**1)** Rather than using `runif` to simulate environmental data, switch to a matrix so we have all combos of temperature and DO available.
+
+**2)** Further explore why we saw so much variation within the AGI values across temperatures and DO. Would expect it to be a graded response, but we saw a somewhat random assortment. Seems overall that the AGI is not as good at depicting interactions among DO and temperature. With DO steps, see changes at the 4th decimal place that are likely due to temperature. 
+
+**3)** Revise how MIcrit value was calculated. Use actual MIcrit values rather than AGI 10th percentile approach. 
+
+**4)** Keep DO at normoxia (20.95) and use a scatterplot depicting how AGI (y-axis) varies with temperature (x-axis). 
+
+**Next steps...**
+
+**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish. 
+
+
 ```{r}
 #| include: false
 #| echo: false
@@ -28,6 +43,7 @@ library(here)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(wesanderson)
+library(patchwork)
 source(here("functions/oxy_demand_functions.R"))
 set.seed(0904)
 
@@ -52,10 +68,8 @@ theme_custom <- function(){
 #| warning: false
 #| label: simu
 
-enviro_sim <- data.frame(lat = runif(100, min = 34, max = 42), 
-                         long = runif(100, min = -77, max = -68), 
-                         DO_atm = runif(100, min = 0.05, max = 0.21), #if set to 0, AGI values break
-                         temp = runif(100, min = 0, max = 35))
+enviro_sim <- expand.grid(DO_atm = seq(from = 0.05, to = 0.21, by = 0.05), 
+                          temp = seq(from = 0, to = 35, by = 2))
 
 DO_thresh <- quantile(enviro_sim$DO_atm)[1]
 
@@ -80,7 +94,7 @@ hist(enviro_bass$mi)
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8)
 enviro_bass$agi <- enviro_bass$DO_atm/enviro_bass$agi_o2_demand
-hist(enviro_bass$agi)
+hist(enviro_bass$agi, breaks = 2)
 
 ```
 
@@ -101,7 +115,7 @@ hist(enviro_cod$mi)
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 148, LwA = 0.005, LwB = 3.185)
 enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
-hist(enviro_cod$agi)
+hist(enviro_cod$agi, breaks = 2)
 
 ```
 
@@ -125,12 +139,12 @@ Min and max weights from the MI study
 #max weight for species
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8)
-hist(enviro_bass$agi_o2_demand)
+hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 #min weight for species
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8)
-hist(enviro_bass$agi_o2_demand)
+hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 ```
 
@@ -144,12 +158,12 @@ Min and max weights used here are just for **juveniles** included in MI study.
 #max weight for species
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 473, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 148, LwA = 0.005, LwB = 3.185)
-hist(enviro_cod$agi_o2_demand)
+hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 #min weight for species
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 79, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 148, LwA = 0.005, LwB = 3.185)
-hist(enviro_cod$agi_o2_demand)
+hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 ```
 
@@ -163,12 +177,12 @@ Min and max TL from MI study. Weights are average from MI study (Slessinger et a
 #max length for species -- max weight included in MI study
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 39.8, LwA = 0.02661, LwB = 2.8)
-hist(enviro_bass$agi_o2_demand)
+hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 #min length for species -- min weight included in MI study
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 22.1, LwA = 0.02661, LwB = 2.8)
-hist(enviro_bass$agi_o2_demand)
+hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 ```
 
@@ -182,12 +196,12 @@ Min and max TLs used here are just for juveniles included in MI study. Weights a
 #max length for species -- max weight included in MI study
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 39, LwA = 0.005, LwB = 3.185)
-hist(enviro_cod$agi_o2_demand)
+hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 #min length for species -- max weight included in MI study
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 21, LwA = 0.005, LwB = 3.185)
-hist(enviro_cod$agi_o2_demand)
+hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 ```
 
@@ -217,7 +231,7 @@ for(i in 1:length(Tpref_vect)){
   
   agi <- enviro_bass$DO_atm/agi_o2_demand
   
-  hist_list[[i]] <- hist(agi, plot = FALSE)
+  hist_list[[i]] <- hist(agi, plot = FALSE, breaks = 2)
 }
 
 par(mfrow = c(2, 4))  # Set plotting area to 2 rows x 3 columns
@@ -246,7 +260,7 @@ for(i in 1:length(Tpref_vect)){
   agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, Linf = 148, LwA = 0.005, LwB = 3.185)
   agi <- enviro_bass$DO_atm/agi_o2_demand
   
-  hist_list[[i]] <- hist(agi, plot = FALSE)
+  hist_list[[i]] <- hist(agi, plot = FALSE, breaks = 2)
 }
 
 par(mfrow = c(2, 2))  # Set plotting area to 2 rows x 3 columns
@@ -341,19 +355,19 @@ Rounded DO and temperature data to whole numbers for figures and binned them by 
 #| fig-height: 7
 
 enviro_bass <- enviro_bass %>% mutate(DO_whole = round(DO_kpa), temp_whole = round(temp))
-enviro_bass$temp_bin <- cut(enviro_bass$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
-enviro_bass$DO_bin <- cut(enviro_bass$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
+#enviro_bass$temp_bin <- cut(enviro_bass$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
+#enviro_bass$DO_bin <- cut(enviro_bass$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
 
 #mi plot
-mi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
-  geom_tile() + 
+mi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_whole), y = as.factor(DO_whole), fill = mi)) +
+  geom_tile(color = "grey60") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
 
 #agi
-agi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
-  geom_tile() + 
+agi_tile <- ggplot(enviro_bass, aes(x = as.factor(temp_whole), y = as.factor(DO_whole), fill = agi)) +
+  geom_tile(color = "grey60") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
@@ -373,20 +387,20 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 #| fig-height: 7
 
 enviro_cod <- enviro_cod %>% mutate(DO_whole = round(DO_kpa), temp_whole = round(temp))
-enviro_cod$temp_bin <- cut(enviro_cod$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
-enviro_cod$DO_bin <- cut(enviro_cod$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
+#enviro_cod$temp_whole <- cut(enviro_cod$temp_whole, breaks = 12, labels = seq(from = 0, to = 35, by = 3))
+#enviro_cod$DO_whole <- cut(enviro_cod$DO_whole, breaks = 6, labels = seq(from = 5, to = 21, by = 3))
 
 
 #mi plot
-mi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
-  geom_tile() + 
+mi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_whole), y = as.factor(DO_whole), fill = mi)) +
+  geom_tile(color = "grey60") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
 
 #agi
-agi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
-  geom_tile() + 
+agi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_whole), y = as.factor(DO_whole), fill = agi)) +
+  geom_tile(color = "grey60") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
@@ -397,6 +411,9 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 
 
 ### MI crit
+
+Switched to MI < 1 serving as the "critical MI threshold" as seen in Slesinger et al., 2019. Please let me know if calculating MI crit should be done differently! 
+
 ```{r}
 #| warning: false
 #| label: tile mi crit
@@ -404,16 +421,16 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 #| fig-height: 7
 
 #bass
-mi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
-  geom_tile() + 
-  geom_rect(data = subset(enviro_bass, mi < quantile(mi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+mi_bass_1 <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+  geom_tile(color = "grey60") + 
+  geom_rect(data = filter(enviro_bass, mi < 1),
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Black sea bass") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -421,16 +438,16 @@ mi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_b
   theme_custom() 
 
 #cod
-mi_cod_1 <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = mi)) +
-  geom_tile() + 
-  geom_rect(data = subset(enviro_cod, mi < quantile(mi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+mi_cod_1 <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+  geom_tile(color = "grey60") + 
+  geom_rect(data = filter(enviro_cod, mi < 1),
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Atlantic cod") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -450,16 +467,16 @@ ggpubr::ggarrange(mi_bass_1, mi_cod_1)
 #| fig-height: 7
 
 #bass
-agi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
-  geom_tile() + 
+agi_bass_1 <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = agi)) +
+  geom_tile(color = "grey60") + 
   geom_rect(data = subset(enviro_bass, agi < quantile(agi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Black sea bass") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -467,16 +484,16 @@ agi_bass_1 <- ggplot(enviro_bass, aes(x = as.factor(temp_bin), y = as.factor(DO_
   theme_custom() 
 
 #cod
-agi_cod_1 <- ggplot(enviro_cod, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = agi)) +
-  geom_tile() + 
+agi_cod_1 <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = agi)) +
+  geom_tile(color = "grey60") + 
   geom_rect(data = subset(enviro_cod, agi < quantile(agi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Atlantic cod") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -505,16 +522,16 @@ enviro_bass_size <- enviro_bass %>%
 
 
 #bass large
-agi_bass_lg <- ggplot(enviro_bass_size, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = bass_lg_agi)) +
-  geom_tile() + 
+agi_bass_lg <- ggplot(enviro_bass_size, aes(x = temp_whole, y = DO_whole, fill = bass_lg_agi)) +
+  geom_tile(color = "grey60") + 
   geom_rect(data = subset(enviro_bass_size, agi < quantile(bass_lg_agi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Large black sea bass (700.4 g)") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -522,16 +539,16 @@ agi_bass_lg <- ggplot(enviro_bass_size, aes(x = as.factor(temp_bin), y = as.fact
   theme_custom() 
 
 #bass small
-agi_bass_sm <- ggplot(enviro_bass_size, aes(x = as.factor(temp_bin), y = as.factor(DO_bin), fill = bass_sm_agi)) +
-  geom_tile() + 
+agi_bass_sm <- ggplot(enviro_bass_size, aes(x = temp_whole, y = DO_whole, fill = bass_sm_agi)) +
+  geom_tile(color = "grey60") + 
   geom_rect(data = subset(enviro_bass_size, agi < quantile(bass_sm_agi, 0.10)),
-            aes(xmin = as.numeric(as.factor(temp_bin)) - 0.5, 
-                xmax = as.numeric(as.factor(temp_bin)) + 0.5,
-                ymin = as.numeric(as.factor(DO_bin)) - 0.5, 
-                ymax = as.numeric(as.factor(DO_bin)) + 0.5), 
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
             fill = NA, 
             color = "#F0941F", 
-            linewidth = 3,
+            linewidth = 2,
             inherit.aes = FALSE) +
   ggtitle("Small black sea bass (193.7 g)") + 
   ylab("Dissolved oxygen (kPa)") + 
@@ -544,6 +561,40 @@ ggpubr::ggarrange(agi_bass_lg, agi_bass_sm)
 
 :::
 
-## Next steps...
+## AGI ~ temperature scatter
 
-**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish. 
+Kept DO at normoxia (0.21 atm) when calculating the AGI. **NOTE** something strange happening with y-axis when rendering html document. 
+
+```{r}
+#| warning: false
+#| label: agi, temp, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#bass
+enviro_bass$agi_normoxia <- 0.21/enviro_bass$agi_o2_demand
+
+bass_norm <- ggplot(enviro_bass, aes(temp, agi_normoxia)) + 
+  geom_point(size = 2, color = "black") + 
+  xlab("Temperature (C)") + 
+  ylab("AGI @ normoxia") + 
+  #coord_cartesian(ylim = c(5.4815, 5.490)) +
+  ggtitle("Bass") + 
+  theme_custom()
+
+#cod
+enviro_cod$agi_normoxia <- 0.21/enviro_cod$agi_o2_demand
+
+cod_norm <- ggplot(enviro_cod, aes(temp, agi_normoxia)) + 
+  geom_point(size = 2, color = "black") + 
+  xlab("Temperature (C)") + 
+  ylab("AGI @ normoxia") + 
+  ggtitle("Cod") +
+  theme_custom()
+
+bass_norm | cod_norm
+
+```
+
+
+
