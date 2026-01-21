@@ -18,16 +18,15 @@ editor_options:
 
 **1)** Rather than using `runif` to simulate environmental data, switch to a matrix so we have all combos of temperature and DO available.
 
-**2)** Further explore why we saw so much variation within the AGI values across temperatures and DO. Would expect it to be a graded response, but we saw a somewhat random assortment. Seems overall that the AGI is not as good at depicting interactions among DO and temperature. With DO steps, see changes at the 4th decimal place that are likely due to temperature. 
+**2)** Further explore why we saw so much variation within the AGI values across temperatures and DO. Would expect it to be a graded response, but we saw a somewhat random assortment. Seems overall that the AGI is not as good at depicting interactions among DO and temperature. With DO steps, see changes at the 4th decimal place that are likely due to temperature.
 
-**3)** Revise how MIcrit value was calculated. Use actual MIcrit values rather than AGI 10th percentile approach. 
+**3)** Revise how MIcrit value was calculated. Use actual MIcrit values rather than AGI 10th percentile approach.
 
-**4)** Keep DO at normoxia (20.95) and use a scatterplot depicting how AGI (y-axis) varies with temperature (x-axis). 
+**4)** Keep DO at normoxia (20.95) and use a scatterplot depicting how AGI (y-axis) varies with temperature (x-axis).
 
 **Next steps...**
 
-**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish. 
-
+**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish.
 
 ```{r}
 #| include: false
@@ -78,7 +77,6 @@ DO_thresh <- quantile(enviro_sim$DO_atm)[1]
 ## Calculate MI and AGI
 
 ::: panel-tabset
-
 ### Black sea bass
 
 ```{r}
@@ -100,7 +98,7 @@ hist(enviro_bass$agi, breaks = 2)
 
 ### Atlantic cod
 
-Used same simulated data for both species. Though normative temperatures would be much lower for cod than bass. Weight is average reported online. 
+Used same simulated data for both species. Though normative temperatures would be much lower for cod than bass. Weight is average reported online.
 
 ```{r}
 #| warning: false
@@ -118,20 +116,19 @@ enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
 hist(enviro_cod$agi, breaks = 2)
 
 ```
-
 :::
 
 ## Size explore (AGI oxygen demand, units: atm)
 
-**Linf (according to von Bertalanffy growth theory)** = NOT the maximum length of the animal. Instead, it is the length a species would reach if it continued to grow indefinitely. Horizontal asymptote of the asymptotic growth curve.  
+**Linf (according to von Bertalanffy growth theory)** = NOT the maximum length of the animal. Instead, it is the length a species would reach if it continued to grow indefinitely. Horizontal asymptote of the asymptotic growth curve.
 
-**Winf (according to Fishbase)** = A parameter of the von Bertalanffy Growth Function (VBGF), expressing the mean weight the fish of a given stock would reach if they were to grow for an infinitely long period; also: the weight corresponding to Linf. 
+**Winf (according to Fishbase)** = A parameter of the von Bertalanffy Growth Function (VBGF), expressing the mean weight the fish of a given stock would reach if they were to grow for an infinitely long period; also: the weight corresponding to Linf.
 
 ::: panel-tabset
-
 ### Black sea bass weight
 
 Min and max weights from the MI study
+
 ```{r}
 #| warning: false
 #| label: W bass
@@ -150,7 +147,8 @@ hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 ### Atlantic cod weight
 
-Min and max weights used here are just for **juveniles** included in MI study. 
+Min and max weights used here are just for **juveniles** included in MI study.
+
 ```{r}
 #| warning: false
 #| label: W cod
@@ -170,6 +168,7 @@ hist(enviro_cod$agi_o2_demand, breaks = 4)
 ### Black sea bass length (Winf via Linf)
 
 Min and max TL from MI study. Weights are average from MI study (Slessinger et al., 2019; 329.9 g)
+
 ```{r}
 #| warning: false
 #| label: Winf bass
@@ -189,6 +188,7 @@ hist(enviro_bass$agi_o2_demand, breaks = 3)
 ### Atlantic cod length (Winf via Linf)
 
 Min and max TLs used here are just for juveniles included in MI study. Weights are average from MI study from SMR results at 10C.
+
 ```{r}
 #| warning: false
 #| label: Winf cod
@@ -204,7 +204,6 @@ enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = 
 hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 ```
-
 :::
 
 ## Temperature sensitivity analysis
@@ -212,7 +211,6 @@ hist(enviro_cod$agi_o2_demand, breaks = 4)
 Just performed for overall AGI values. Can follow up by focusing on how variations in the numerator or denominator change the AGI output.
 
 ::: panel-tabset
-
 ### Black sea bass
 
 Tested how AGI calculations changed with a range of Tpref values. Tested a series of different temperatures within range of those where empirical MI data is available (12 - 30 C).
@@ -242,7 +240,6 @@ for (i in seq_along(hist_list)) {
 
 ```
 
-
 ### Atlantic cod
 
 Tested how AGI calculations changed with a range of Tpref values. Tested a series of different temperatures within range of those where empirical MI data is available (5 - 15 C).
@@ -270,17 +267,15 @@ for (i in seq_along(hist_list)) {
 }
 
 ```
-
 :::
-
 
 ## Calculated metabolic demand (AGI denominator) vs. empirical
 
 ::: panel-tabset
-
 ### Black sea bass
 
-Empirical data taken from target temperature binned averages from Slessinger et al., 2019. Sexes were mixed to calculate temperature specific averages. RMR are reported as mg O2/hr/kg. AGI-MR values are in atm. 
+Empirical data taken from target temperature binned averages from Slessinger et al., 2019. Sexes were mixed to calculate temperature specific averages. RMR are reported as mg O2/hr/kg. AGI-MR values are in atm.
+
 ```{r}
 #| warning: false
 #| label: met bass
@@ -308,10 +303,10 @@ summary(bass_mod) #R2 = 0.9605
 
 ```
 
-
-### Atlantic cod 
+### Atlantic cod
 
 Empirical data taken from target temperature binned averages from Schurmann and Steffensen 1997. Values were pulled from table 1 of the paper. RMR are reported as mg O2/hr/kg. AGI-MR values are in atm.
+
 ```{r}
 #| warning: false
 #| label: met cod
@@ -336,16 +331,13 @@ cod_mod <- lm(agi_o2_demand ~ SMR, emp_cod_test)
 summary(cod_mod) #R2 = 1
 
 ```
-
 :::
-
 
 ## AGI & MI tile plots
 
-Rounded DO and temperature data to whole numbers for figures and binned them by every 3 values to reduce resolution (and empty spaces) of tile plots. 
+Rounded DO and temperature data to whole numbers for figures and binned them by every 3 values to reduce resolution (and empty spaces) of tile plots.
 
 ::: panel-tabset
-
 ### Black sea bass
 
 ```{r}
@@ -376,9 +368,7 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 
 ```
 
-
-### Atlantic cod 
-
+### Atlantic cod
 
 ```{r}
 #| warning: false
@@ -409,10 +399,9 @@ ggpubr::ggarrange(mi_tile, agi_tile)
 
 ```
 
-
 ### MI crit
 
-Switched to MI < 1 serving as the "critical MI threshold" as seen in Slesinger et al., 2019. Please let me know if calculating MI crit should be done differently! 
+Comparing MIcrit values as reported in Slessinger et al., 2024 reported for stocks along the NE shelf to scaled MIcrit values used by Deutsch et al., 2020.
 
 ```{r}
 #| warning: false
@@ -420,10 +409,10 @@ Switched to MI < 1 serving as the "critical MI threshold" as seen in Slesinger e
 #| fig-width: 15
 #| fig-height: 7
 
-#bass
-mi_bass_1 <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+#bass - ES
+mi_bass_1_es <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = mi)) +
   geom_tile(color = "grey60") + 
-  geom_rect(data = filter(enviro_bass, mi < 1),
+  geom_rect(data = filter(enviro_bass, mi < 3.27),
             aes(xmin = as.numeric(temp_whole) - 1, 
                 xmax = as.numeric(temp_whole) + 1,
                 ymin = as.numeric(DO_whole) - 2.5, 
@@ -432,15 +421,15 @@ mi_bass_1 <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = mi)) +
             color = "#F0941F", 
             linewidth = 2,
             inherit.aes = FALSE) +
-  ggtitle("Black sea bass") + 
+  ggtitle("Black sea bass, MIcrit reported by Slessinger et al., 2024") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom() 
 
-#cod
-mi_cod_1 <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+#bass - CD
+mi_bass_1_cd <- ggplot(enviro_bass, aes(x = temp_whole, y = DO_whole, fill = mi)) +
   geom_tile(color = "grey60") + 
-  geom_rect(data = filter(enviro_cod, mi < 1),
+  geom_rect(data = filter(enviro_bass, mi < 3.28), #range was 3.27-3.29 so I selected middle value
             aes(xmin = as.numeric(temp_whole) - 1, 
                 xmax = as.numeric(temp_whole) + 1,
                 ymin = as.numeric(DO_whole) - 2.5, 
@@ -449,12 +438,47 @@ mi_cod_1 <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = mi)) +
             color = "#F0941F", 
             linewidth = 2,
             inherit.aes = FALSE) +
-  ggtitle("Atlantic cod") + 
+  ggtitle("Black sea bass, MIcrit reported by Deutsch et al., 2020") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom() 
+
+#cod - ES
+mi_cod_1_es <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+  geom_tile(color = "grey60") + 
+  geom_rect(data = filter(enviro_cod, mi < 2.8),
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 2,
+            inherit.aes = FALSE) +
+  ggtitle("Atlantic cod, MIcrit reported by Slessinger et al., 2024") + 
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
 
-ggpubr::ggarrange(mi_bass_1, mi_cod_1)
+#cod - CD
+mi_cod_1_cd <- ggplot(enviro_cod, aes(x = temp_whole, y = DO_whole, fill = mi)) +
+  geom_tile(color = "grey60") + 
+  geom_rect(data = filter(enviro_cod, mi < 2.4),
+            aes(xmin = as.numeric(temp_whole) - 1, 
+                xmax = as.numeric(temp_whole) + 1,
+                ymin = as.numeric(DO_whole) - 2.5, 
+                ymax = as.numeric(DO_whole) + 2.5), 
+            fill = NA, 
+            color = "#F0941F", 
+            linewidth = 2,
+            inherit.aes = FALSE) +
+  ggtitle("Atlantic cod, MIcrit reported by Deutsch et al., 2020") + 
+  ylab("Dissolved oxygen (kPa)") + 
+  xlab("Temperature (C)") + 
+  theme_custom()
+
+ggpubr::ggarrange(mi_bass_1_es, mi_bass_1_cd)
+ggpubr::ggarrange(mi_cod_1_es, mi_cod_1_cd)
 
 ```
 
@@ -504,7 +528,7 @@ ggpubr::ggarrange(agi_bass_1, agi_cod_1)
 
 ```
 
-### AGI bass sizes 
+### AGI bass sizes
 
 ```{r}
 #| warning: false
@@ -558,12 +582,11 @@ agi_bass_sm <- ggplot(enviro_bass_size, aes(x = temp_whole, y = DO_whole, fill =
 ggpubr::ggarrange(agi_bass_lg, agi_bass_sm)
 
 ```
-
 :::
 
-## AGI ~ temperature scatter
+## AGI \~ temperature scatter
 
-Kept DO at normoxia (0.21 atm) when calculating the AGI. **NOTE** something strange happening with y-axis when rendering html document. 
+Kept DO at normoxia (0.21 atm) when calculating the AGI. **NOTE** something strange happening with y-axis when rendering html document.
 
 ```{r}
 #| warning: false
@@ -595,6 +618,3 @@ cod_norm <- ggplot(enviro_cod, aes(temp, agi_normoxia)) +
 bass_norm | cod_norm
 
 ```
-
-
-

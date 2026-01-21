@@ -1,0 +1,10 @@
+---
+title: "TOC for MI-AGI comparison"
+author: "Emily Nazario | UC Santa Cruz | enazario'@'ucsc.edu"
+format: html
+editor: visual
+---
+
+
+[See here](sim_compare.html) for the simulated environmental data visualizations.
+
