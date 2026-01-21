@@ -206,6 +206,37 @@ hist(enviro_cod$agi_o2_demand, breaks = 4)
 ```
 :::
 
+```{r}
+#| warning: false
+#| label: reset index calculations
+#| include: false
+
+### MI ####
+enviro_bass <- enviro_sim %>% mutate(DO_kpa = DO_atm*101.325)
+enviro_bass$mi <- MI_calc(A0 = 0.00040728, Bn = 0.01, DO_kPa = enviro_bass$DO_kpa, E0 = 0.27, kB = 0.00008617333262, T_C = enviro_bass$temp)
+hist(enviro_bass$mi)
+
+### AGI ####
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
+                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi <- enviro_bass$DO_atm/enviro_bass$agi_o2_demand
+hist(enviro_bass$agi, breaks = 2)
+
+#| warning: false
+#| label: calc cod
+
+### MI ####
+enviro_cod <- enviro_sim %>% mutate(DO_kpa = DO_atm*101.325)
+enviro_cod$mi <- MI_calc(A0 = 0.000000668, Bn = 0.01, DO_kPa = enviro_cod$DO_kpa, E0 = 0.42, kB = 0.00008617333262, T_C = enviro_cod$temp)
+hist(enviro_cod$mi)
+
+### AGI ####
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
+                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
+hist(enviro_cod$agi, breaks = 2)
+```
+
 ## Temperature sensitivity analysis
 
 Just performed for overall AGI values. Can follow up by focusing on how variations in the numerator or denominator change the AGI output.
@@ -616,5 +647,42 @@ cod_norm <- ggplot(enviro_cod, aes(temp, agi_normoxia)) +
   theme_custom()
 
 bass_norm | cod_norm
+
+```
+
+## AGI \~ MI
+
+Inspired by the scatter plots included in Clarke et al., 2021. Slopes were obtained using a simple lm().
+
+```{r}
+#| warning: false
+#| label: agi, mi, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#bass
+bass_mi_agi <- ggplot(enviro_bass, aes(mi, agi)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 2, color = "black") + 
+  xlab("MI") + 
+  ylab("AGI") + 
+  #coord_cartesian(ylim = c(5.4815, 5.490)) +
+  ggtitle("Bass") + 
+  theme_custom()
+
+#cod
+cod_mi_agi <- ggplot(enviro_cod, aes(mi, agi)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 2, color = "black") + 
+  xlab("MI") + 
+  ylab("AGI") + 
+  ggtitle("Cod") +
+  theme_custom() 
+
+bass_mi_agi | cod_mi_agi
+
+cod_mod <- lm(agi ~ mi, data = enviro_cod); summary(cod_mod)
+bass_mod <- lm(agi ~ mi, data = enviro_bass); summary(bass_mod)
+
 
 ```
