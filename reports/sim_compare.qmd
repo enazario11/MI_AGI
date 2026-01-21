@@ -43,7 +43,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(wesanderson)
 library(patchwork)
-source(here("functions/oxy_demand_functions.R"))
+source(here("c:/Users/nazar/Documents/Projects/MI_AGI/functions/oxy_demand_functions.R"))
 set.seed(0904)
 
 shore <- ne_download(scale = "medium", type = "land", category = "physical", returnclass = "sf")
