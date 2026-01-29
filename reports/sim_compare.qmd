@@ -745,3 +745,77 @@ cod_mod_agi_temp <- lm(agi ~ temp, data = enviro_cod); summary(cod_mod_agi_temp)
 cod_mi_temp | cod_agi_temp
 ```
 :::
+
+## AGI/MI \~ DO
+
+::: panel-tabset
+## Bass
+
+```{r}
+#| warning: false
+#| label: bass, agi, mi, DO, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#bass, mi
+bass_mi_do <- ggplot(enviro_bass, aes(DO_kpa, mi, fill = temp)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("DO (kPa)") + 
+  ylab("MI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Bass, MI") + 
+  theme_custom()
+
+bass_mod_mi_do <- lm(mi ~ DO_kpa, data = enviro_bass); summary(bass_mod_mi_do)
+
+#bass, agi
+bass_agi_do <- ggplot(enviro_bass, aes(DO_atm, agi, fill = temp)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("DO (atm)") + 
+  ylab("AGI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Bass, AGI") + 
+  theme_custom()
+
+bass_mod_agi_do <- lm(agi ~ DO_atm, data = enviro_bass); summary(bass_mod_agi_do)
+
+bass_mi_do | bass_agi_do
+```
+
+## Cod
+
+```{r}
+#| warning: false
+#| label: cod, agi, mi, DO, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#cod, mi
+cod_mi_do <- ggplot(enviro_cod, aes(DO_kpa, mi, fill = temp)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("DO (kPa)") + 
+  ylab("MI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Cod, MI") + 
+  theme_custom()
+
+cod_mod_mi_do <- lm(mi ~ DO_kpa, data = enviro_cod); summary(cod_mod_mi_do)
+
+#cod, agi
+cod_agi_do <- ggplot(enviro_cod, aes(DO_atm, agi, fill = temp)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("DO (atm)") + 
+  ylab("AGI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Cod, AGI") + 
+  theme_custom()
+
+cod_mod_agi_do <- lm(agi ~ DO_atm, data = enviro_cod); summary(cod_mod_agi_do)
+
+cod_mi_do | cod_agi_do
+```
+:::
