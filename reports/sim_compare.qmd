@@ -14,20 +14,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-**Modified Items Since August:**
-
-**1)** Rather than using `runif` to simulate environmental data, switch to a matrix so we have all combos of temperature and DO available.
-
-**2)** Further explore why we saw so much variation within the AGI values across temperatures and DO. Would expect it to be a graded response, but we saw a somewhat random assortment. Seems overall that the AGI is not as good at depicting interactions among DO and temperature. With DO steps, see changes at the 4th decimal place that are likely due to temperature.
-
-**3)** Revise how MIcrit value was calculated. Use actual MIcrit values rather than AGI 10th percentile approach.
-
-**4)** Keep DO at normoxia (20.95) and use a scatterplot depicting how AGI (y-axis) varies with temperature (x-axis).
-
-**Next steps...**
-
-**1)** Identify how to incorporate changes in size into calculating the MI. Then, complete tile plots for different sized fish.
-
 ```{r}
 #| include: false
 #| echo: false
@@ -652,8 +638,6 @@ bass_norm | cod_norm
 
 ## AGI \~ MI
 
-Inspired by the scatter plots included in Clarke et al., 2021. Slopes were obtained using a simple lm().
-
 ```{r}
 #| warning: false
 #| label: agi, mi, scatter
@@ -666,7 +650,7 @@ bass_mi_agi <- ggplot(enviro_bass, aes(mi, agi)) +
   geom_point(size = 2, color = "black") + 
   xlab("MI") + 
   ylab("AGI") + 
-  #coord_cartesian(ylim = c(5.4815, 5.490)) +
+  coord_cartesian(ylim = c(1, 4.2)) +
   ggtitle("Bass") + 
   theme_custom()
 
@@ -675,7 +659,8 @@ cod_mi_agi <- ggplot(enviro_cod, aes(mi, agi)) +
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 2, color = "black") + 
   xlab("MI") + 
-  ylab("AGI") + 
+  ylab("AGI") +  
+  coord_cartesian(ylim = c(1, 4.2)) +
   ggtitle("Cod") +
   theme_custom() 
 
@@ -686,3 +671,77 @@ bass_mod <- lm(agi ~ mi, data = enviro_bass); summary(bass_mod)
 
 
 ```
+
+## AGI/MI \~ temp.
+
+::: panel-tabset
+## Bass
+
+```{r}
+#| warning: false
+#| label: bass, agi, mi, temp, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#bass, mi
+bass_mi_temp <- ggplot(enviro_bass, aes(temp, mi, fill = DO_atm)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("Temperature (C)") + 
+  ylab("MI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Bass, MI") + 
+  theme_custom()
+
+bass_mod_mi_temp <- lm(mi ~ temp, data = enviro_bass); summary(bass_mod_mi_temp)
+
+#bass, agi
+bass_agi_temp <- ggplot(enviro_bass, aes(temp, agi, fill = DO_atm)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("Temperature (C)") + 
+  ylab("AGI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Bass, AGI") + 
+  theme_custom()
+
+bass_mod_agi_temp <- lm(agi ~ temp, data = enviro_bass); summary(bass_mod_agi_temp)
+
+bass_mi_temp | bass_agi_temp
+```
+
+## Cod
+
+```{r}
+#| warning: false
+#| label: cod, agi, mi, temp, scatter
+#| fig-width: 10
+#| fig-height: 5
+
+#cod, mi
+cod_mi_temp <- ggplot(enviro_cod, aes(temp, mi, fill = DO_atm)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("Temperature (C)") + 
+  ylab("MI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Cod, MI") + 
+  theme_custom()
+
+cod_mod_mi_temp <- lm(mi ~ temp, data = enviro_cod); summary(cod_mod_mi_temp)
+
+#cod, agi
+cod_agi_temp <- ggplot(enviro_cod, aes(temp, agi, fill = DO_atm)) + 
+  stat_smooth(method = "lm", col = "steelblue4") +
+  geom_point(size = 3, color = "black", shape = 21) + 
+  xlab("Temperature (C)") + 
+  ylab("AGI") + 
+  #coord_cartesian(ylim = c(1, 4.2)) +
+  ggtitle("Cod, AGI") + 
+  theme_custom()
+
+cod_mod_agi_temp <- lm(agi ~ temp, data = enviro_cod); summary(cod_mod_agi_temp)
+
+cod_mi_temp | cod_agi_temp
+```
+:::

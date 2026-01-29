@@ -70,11 +70,12 @@ OxyDemand <- function(Tpref, PO2_thresh, T_C, W = 51807.63, d = 0.700, K = 0.070
   # Convert length to weight using scaling relationship
   Winf <- LwA * Linf**LwB
 
-  O2_demand <- W**(1 - d) * exp(-j2 / T_K) * PO2_thresh * exp(-j1 / Tpref_K) / 
-    (Winf**(1 - d) * exp(-j1 / T_K) * exp(-j2 / Tpref_K))
+  O2_demand <- ((W**(1 - d)) * exp(-j2/T_K) * PO2_thresh * exp(-j1/Tpref_K)) / 
+    ((Winf**(1 - d)) * exp(-j1/T_K) * exp(-j2/Tpref_K))
   
   O2_demand
 } 
+
 
 rast_to_atm <- function(do, temp, so, depth){
     # Constants:
