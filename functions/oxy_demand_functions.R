@@ -190,7 +190,7 @@ thresh_atm <- function(do_mL_L = 2, temp_C, so_psu, depth){
   press_bar = pressure_Pa/100000 #get calculated pressure into bar
   
       #use the salinity and temperature conditions at the surface to get unit to mmol/L
-  thresh_mmol_L <- convert_DO(do_mL_L, "mL/L", "mmol/L", S = 33.499664, t = 19.191122, P = press_bar)
+  thresh_mmol_L <- respR::convert_DO(do_mL_L, "mL/L", "mmol/L", S = 33.499664, t = 19.191122, P = press_bar)
   thresh_mmol_m3 <- thresh_mmol_L/0.001 #convert L to m^3
   
   #change temp, sal, and depth based on condtions at depth
