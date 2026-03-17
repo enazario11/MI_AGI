@@ -56,7 +56,9 @@ theme_custom <- function(){
 enviro_sim <- expand.grid(DO_atm = seq(from = 0.05, to = 0.21, by = 0.05), 
                           temp = seq(from = 0, to = 35, by = 2))
 
-DO_thresh <- quantile(enviro_sim$DO_atm)[1]
+enviro_sim <- enviro_sim %>% mutate(DO_mbar = DO_atm*1013.25)
+
+DO_thresh <- quantile(enviro_sim$DO_mbar)[1]
 
 ```
 
@@ -75,10 +77,9 @@ enviro_bass$mi <- MI_calc(A0 = 0.00040728, Bn = 0.01, DO_kPa = enviro_bass$DO_kp
 hist(enviro_bass$mi)
 
 ### AGI ####
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
-enviro_bass$agi <- enviro_bass$DO_atm/enviro_bass$agi_o2_demand
-hist(enviro_bass$agi, breaks = 2)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi <- enviro_bass$DO_mbar/enviro_bass$agi_o2_demand
+hist(enviro_bass$agi, breaks = 7)
 
 ```
 
@@ -98,7 +99,7 @@ hist(enviro_cod$mi)
 ### AGI ####
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 148, LwA = 0.005, LwB = 3.185)
-enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
+enviro_cod$agi <- enviro_cod$DO_mbar/enviro_cod$agi_o2_demand
 hist(enviro_cod$agi, breaks = 2)
 
 ```
@@ -205,7 +206,7 @@ hist(enviro_bass$mi)
 ### AGI ####
 enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8)
-enviro_bass$agi <- enviro_bass$DO_atm/enviro_bass$agi_o2_demand
+enviro_bass$agi <- enviro_bass$DO_mbar/enviro_bass$agi_o2_demand
 hist(enviro_bass$agi, breaks = 2)
 
 #| warning: false
@@ -219,7 +220,7 @@ hist(enviro_cod$mi)
 ### AGI ####
 enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
                                       Linf = 148, LwA = 0.005, LwB = 3.185)
-enviro_cod$agi <- enviro_cod$DO_atm/enviro_cod$agi_o2_demand
+enviro_cod$agi <- enviro_cod$DO_mbar/enviro_cod$agi_o2_demand
 hist(enviro_cod$agi, breaks = 2)
 ```
 
@@ -244,7 +245,7 @@ for(i in 1:length(Tpref_vect)){
   
   agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
   
-  agi <- enviro_bass$DO_atm/agi_o2_demand
+  agi <- enviro_bass$DO_mbar/agi_o2_demand
   
   hist_list[[i]] <- hist(agi, plot = FALSE, breaks = 2)
 }
@@ -272,7 +273,7 @@ for(i in 1:length(Tpref_vect)){
   Tpref_temp = Tpref_vect[i]
   
   agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, Linf = 148, LwA = 0.005, LwB = 3.185)
-  agi <- enviro_bass$DO_atm/agi_o2_demand
+  agi <- enviro_bass$DO_mbar/agi_o2_demand
   
   hist_list[[i]] <- hist(agi, plot = FALSE, breaks = 2)
 }
@@ -556,10 +557,10 @@ ggpubr::ggarrange(agi_bass_1, agi_cod_1)
 enviro_bass_size <- enviro_bass %>%
   mutate(bass_lg_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
-         bass_lg_agi = DO_atm/bass_lg_demand, 
+         bass_lg_agi = DO_mbar/bass_lg_demand, 
          bass_sm_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
                                       Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
-         bass_sm_agi = DO_atm/bass_sm_demand)
+         bass_sm_agi = DO_mbar/bass_sm_demand)
 
 
 #bass large
@@ -684,7 +685,7 @@ bass_mod <- lm(agi ~ mi, data = enviro_bass); summary(bass_mod)
 #| fig-height: 5
 
 #bass, mi
-bass_mi_temp <- ggplot(enviro_bass, aes(temp, mi, fill = DO_atm)) + 
+bass_mi_temp <- ggplot(enviro_bass, aes(temp, mi, fill = DO_mbar)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("Temperature (C)") + 
@@ -696,7 +697,7 @@ bass_mi_temp <- ggplot(enviro_bass, aes(temp, mi, fill = DO_atm)) +
 bass_mod_mi_temp <- lm(mi ~ temp, data = enviro_bass); summary(bass_mod_mi_temp)
 
 #bass, agi
-bass_agi_temp <- ggplot(enviro_bass, aes(temp, agi, fill = DO_atm)) + 
+bass_agi_temp <- ggplot(enviro_bass, aes(temp, agi, fill = DO_mbar)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("Temperature (C)") + 
@@ -719,7 +720,7 @@ bass_mi_temp | bass_agi_temp
 #| fig-height: 5
 
 #cod, mi
-cod_mi_temp <- ggplot(enviro_cod, aes(temp, mi, fill = DO_atm)) + 
+cod_mi_temp <- ggplot(enviro_cod, aes(temp, mi, fill = DO_mbar)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("Temperature (C)") + 
@@ -731,7 +732,7 @@ cod_mi_temp <- ggplot(enviro_cod, aes(temp, mi, fill = DO_atm)) +
 cod_mod_mi_temp <- lm(mi ~ temp, data = enviro_cod); summary(cod_mod_mi_temp)
 
 #cod, agi
-cod_agi_temp <- ggplot(enviro_cod, aes(temp, agi, fill = DO_atm)) + 
+cod_agi_temp <- ggplot(enviro_cod, aes(temp, agi, fill = DO_mbar)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("Temperature (C)") + 
@@ -770,7 +771,7 @@ bass_mi_do <- ggplot(enviro_bass, aes(DO_kpa, mi, fill = temp)) +
 bass_mod_mi_do <- lm(mi ~ DO_kpa, data = enviro_bass); summary(bass_mod_mi_do)
 
 #bass, agi
-bass_agi_do <- ggplot(enviro_bass, aes(DO_atm, agi, fill = temp)) + 
+bass_agi_do <- ggplot(enviro_bass, aes(DO_mbar, agi, fill = temp)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("DO (atm)") + 
@@ -779,7 +780,7 @@ bass_agi_do <- ggplot(enviro_bass, aes(DO_atm, agi, fill = temp)) +
   ggtitle("Bass, AGI") + 
   theme_custom()
 
-bass_mod_agi_do <- lm(agi ~ DO_atm, data = enviro_bass); summary(bass_mod_agi_do)
+bass_mod_agi_do <- lm(agi ~ DO_mbar, data = enviro_bass); summary(bass_mod_agi_do)
 
 bass_mi_do | bass_agi_do
 ```
@@ -805,7 +806,7 @@ cod_mi_do <- ggplot(enviro_cod, aes(DO_kpa, mi, fill = temp)) +
 cod_mod_mi_do <- lm(mi ~ DO_kpa, data = enviro_cod); summary(cod_mod_mi_do)
 
 #cod, agi
-cod_agi_do <- ggplot(enviro_cod, aes(DO_atm, agi, fill = temp)) + 
+cod_agi_do <- ggplot(enviro_cod, aes(DO_mbar, agi, fill = temp)) + 
   stat_smooth(method = "lm", col = "steelblue4") +
   geom_point(size = 3, color = "black", shape = 21) + 
   xlab("DO (atm)") + 
@@ -814,7 +815,7 @@ cod_agi_do <- ggplot(enviro_cod, aes(DO_atm, agi, fill = temp)) +
   ggtitle("Cod, AGI") + 
   theme_custom()
 
-cod_mod_agi_do <- lm(agi ~ DO_atm, data = enviro_cod); summary(cod_mod_agi_do)
+cod_mod_agi_do <- lm(agi ~ DO_mbar, data = enviro_cod); summary(cod_mod_agi_do)
 
 cod_mi_do | cod_agi_do
 ```
