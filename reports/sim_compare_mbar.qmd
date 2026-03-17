@@ -97,8 +97,7 @@ enviro_cod$mi <- MI_calc(A0 = 0.000000668, Bn = 0.01, DO_kPa = enviro_cod$DO_kpa
 hist(enviro_cod$mi)
 
 ### AGI ####
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
 enviro_cod$agi <- enviro_cod$DO_mbar/enviro_cod$agi_o2_demand
 hist(enviro_cod$agi, breaks = 2)
 
@@ -121,13 +120,11 @@ Min and max weights from the MI study
 #| label: W bass
 
 #max weight for species
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
 hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 #min weight for species
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
 hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 ```
@@ -141,13 +138,11 @@ Min and max weights used here are just for **juveniles** included in MI study.
 #| label: W cod
 
 #max weight for species
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 473, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 473, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
 hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 #min weight for species
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 79, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 79, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
 hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 ```
@@ -161,13 +156,11 @@ Min and max TL from MI study. Weights are average from MI study (Slessinger et a
 #| label: Winf bass
 
 #max length for species -- max weight included in MI study
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 39.8, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, Linf = 39.8, LwA = 0.02661, LwB = 2.8)
 hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 #min length for species -- min weight included in MI study
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 22.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 329.9, d = 0.700, K = 0.231, Linf = 22.1, LwA = 0.02661, LwB = 2.8)
 hist(enviro_bass$agi_o2_demand, breaks = 3)
 
 ```
@@ -181,13 +174,11 @@ Min and max TLs used here are just for juveniles included in MI study. Weights a
 #| label: Winf cod
 
 #max length for species -- max weight included in MI study
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 39, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, Linf = 39, LwA = 0.005, LwB = 3.185)
 hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 #min length for species -- max weight included in MI study
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 21, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 157.7, d = 0.700, K = 0.121, Linf = 21, LwA = 0.005, LwB = 3.185)
 hist(enviro_cod$agi_o2_demand, breaks = 4)
 
 ```
@@ -204,8 +195,7 @@ enviro_bass$mi <- MI_calc(A0 = 0.00040728, Bn = 0.01, DO_kPa = enviro_bass$DO_kp
 hist(enviro_bass$mi)
 
 ### AGI ####
-enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+enviro_bass$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
 enviro_bass$agi <- enviro_bass$DO_mbar/enviro_bass$agi_o2_demand
 hist(enviro_bass$agi, breaks = 2)
 
@@ -218,8 +208,7 @@ enviro_cod$mi <- MI_calc(A0 = 0.000000668, Bn = 0.01, DO_kPa = enviro_cod$DO_kpa
 hist(enviro_cod$mi)
 
 ### AGI ####
-enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, 
-                                      Linf = 148, LwA = 0.005, LwB = 3.185)
+enviro_cod$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
 enviro_cod$agi <- enviro_cod$DO_mbar/enviro_cod$agi_o2_demand
 hist(enviro_cod$agi, breaks = 2)
 ```
@@ -243,7 +232,7 @@ hist_list = list()
 for(i in 1:length(Tpref_vect)){
   Tpref_temp = Tpref_vect[i]
   
-  agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+  agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 498.95, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
   
   agi <- enviro_bass$DO_mbar/agi_o2_demand
   
@@ -272,7 +261,7 @@ hist_list = list()
 for(i in 1:length(Tpref_vect)){
   Tpref_temp = Tpref_vect[i]
   
-  agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, Linf = 148, LwA = 0.005, LwB = 3.185)
+  agi_o2_demand <- OxyDemand(Tpref = Tpref_temp, PO2_thresh = DO_thresh, T_C = enviro_cod$temp, W = 39916.1, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
   agi <- enviro_bass$DO_mbar/agi_o2_demand
   
   hist_list[[i]] <- hist(agi, plot = FALSE, breaks = 2)
@@ -302,8 +291,7 @@ par(mfrow = c(1,1))
 emp_bass_test <- data.frame(temp = as.numeric(c(12, 17, 22, 24, 27)), 
                            RMR = as.numeric(c(47.68, 69.28, 94.42, 117.93, 142.5))) 
 
-emp_bass_test$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = emp_bass_test$temp, W = 498.95, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8)
+emp_bass_test$agi_o2_demand <- OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = emp_bass_test$temp, W = 498.95, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8)
 
 ggplot(emp_bass_test, aes(x = RMR, y = agi_o2_demand, fill = temp)) +
   geom_smooth(method = "lm", linetype = "dashed", color = "gray40") +  # 1:1 line
@@ -332,7 +320,7 @@ Empirical data taken from target temperature binned averages from Schurmann and 
 emp_cod_test <- data.frame(temp = as.numeric(c(5, 10, 15)), 
                            SMR = as.numeric(c(35.5, 57, 78.2))) 
 
-emp_cod_test$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = emp_cod_test$temp, W = 39916.1, d = 0.700, K = 0.121, j2 = 8, j1 = 4.5, Linf = 148, LwA = 0.005, LwB = 3.185)
+emp_cod_test$agi_o2_demand <- OxyDemand(Tpref = 12, PO2_thresh = DO_thresh, T_C = emp_cod_test$temp, W = 39916.1, d = 0.700, K = 0.121, Linf = 148, LwA = 0.005, LwB = 3.185)
 
 ggplot(emp_cod_test, aes(x = SMR, y = agi_o2_demand, fill = temp)) +
   geom_smooth(method = "lm", linetype = "dashed", color = "gray40") +  # 1:1 line
@@ -555,11 +543,9 @@ ggpubr::ggarrange(agi_bass_1, agi_cod_1)
 #| fig-height: 7
 
 enviro_bass_size <- enviro_bass %>%
-  mutate(bass_lg_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
+  mutate(bass_lg_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 700.4, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
          bass_lg_agi = DO_mbar/bass_lg_demand, 
-         bass_sm_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, j2 = 8, j1 = 4.5, 
-                                      Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
+         bass_sm_demand = OxyDemand(Tpref = 22, PO2_thresh = DO_thresh, T_C = enviro_bass$temp, W = 193.7, d = 0.700, K = 0.231, Linf = 34.1, LwA = 0.02661, LwB = 2.8), 
          bass_sm_agi = DO_mbar/bass_sm_demand)
 
 
@@ -613,7 +599,7 @@ Kept DO at normoxia (0.21 atm) when calculating the AGI. **NOTE** something stra
 #| fig-height: 5
 
 #bass
-enviro_bass$agi_normoxia <- 0.21/enviro_bass$agi_o2_demand
+enviro_bass$agi_normoxia <- 0.21*1013.25/enviro_bass$agi_o2_demand
 
 bass_norm <- ggplot(enviro_bass, aes(temp, agi_normoxia)) + 
   geom_point(size = 2, color = "black") + 
@@ -624,7 +610,7 @@ bass_norm <- ggplot(enviro_bass, aes(temp, agi_normoxia)) +
   theme_custom()
 
 #cod
-enviro_cod$agi_normoxia <- 0.21/enviro_cod$agi_o2_demand
+enviro_cod$agi_normoxia <- 0.21*1013.25/enviro_cod$agi_o2_demand
 
 cod_norm <- ggplot(enviro_cod, aes(temp, agi_normoxia)) + 
   geom_point(size = 2, color = "black") + 
