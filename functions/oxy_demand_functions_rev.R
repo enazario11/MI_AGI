@@ -59,7 +59,7 @@ DO_to_atm <- function(loc_enviro_dat, depth){
 
 
 #caclulated metabolic demand --- Moreee DO is in mbar, I've been using atm
-OxyDemand <- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8, j1 = 4.5, 
+OxyDemand <- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8000, j1 = 4500, 
                       Linf, LwA, LwB){
 
   # removing K/(1-d) because it cancels out in numerator and denominator

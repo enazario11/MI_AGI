@@ -637,7 +637,7 @@ bass_mi_agi <- ggplot(enviro_bass, aes(mi, agi)) +
   geom_point(size = 2, color = "black") + 
   xlab("MI") + 
   ylab("AGI") + 
-  coord_cartesian(ylim = c(1, 4.2)) +
+  #coord_cartesian(ylim = c(1, 4.2)) +
   ggtitle("Bass") + 
   theme_custom()
 
@@ -647,7 +647,7 @@ cod_mi_agi <- ggplot(enviro_cod, aes(mi, agi)) +
   geom_point(size = 2, color = "black") + 
   xlab("MI") + 
   ylab("AGI") +  
-  coord_cartesian(ylim = c(1, 4.2)) +
+  #coord_cartesian(ylim = c(1, 4.2)) +
   ggtitle("Cod") +
   theme_custom() 
 
