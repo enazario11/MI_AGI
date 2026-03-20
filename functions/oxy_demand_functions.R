@@ -59,8 +59,8 @@ DO_to_atm <- function(loc_enviro_dat, depth){
 
 
 #caclulated metabolic demand
-OxyDemand <- function(Tpref, PO2_thresh, T_C, W = 51807.63, d = 0.700, K = 0.070, j2 = 8, j1 = 4.5, 
-                      Linf = 321, LwA = 0.01670, LwB = 2.847){
+OxyDemand <- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8, j1 = 4.5, 
+                      Linf, LwA, LwB){
 
   # removing K/(1-d) because it cancels out in numerator and denominator, right?
   # Convert C to K temperatues
