@@ -1,5 +1,5 @@
 ---
-title: "MI - AGI: Simulated data"
+title: "MI - AGI: Revised mbar"
 author: "Emily Nazario"
 date: "`r Sys.Date()`"
 format:

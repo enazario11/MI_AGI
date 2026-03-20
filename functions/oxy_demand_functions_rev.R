@@ -59,24 +59,43 @@ DO_to_atm <- function(loc_enviro_dat, depth){
 
 
 #caclulated metabolic demand --- Moreee DO is in mbar, I've been using atm
-OxyDemand <- function(Tpref, PO2_thresh, T_C, W = 51807.63, d = 0.700, K = 0.070, j2 = 8000, j1 = 4500, 
-                      Linf = 321, LwA = 0.01670, LwB = 2.847){
+# OxyDemand <- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8000, j1 = 4500, 
+#                       Linf, LwA, LwB){
 
-  # removing K/(1-d) because it cancels out in numerator and denominator, right?
-  # Convert C to K temperatues
-  T_K <- T_C + 273.15 
-  Tpref_K <- Tpref + 273.15
+#   # removing K/(1-d) because it cancels out in numerator and denominator
+#   # Convert C to K temperatues
+#   T_K <- T_C + 273.15 
+#   Tpref_K <- Tpref + 273.15
   
-  O2_demand <- PO2_thresh * ((1/3)**(1-d)) * exp( ((j2-j1)/(Tpref_K)) - ((j2-j1)/(T_K)) )
+#   #O2_demand <- PO2_thresh * ((1/3)**(1-d)) * exp( ((j2-j1)/(Tpref_K)) + ((j1-j2)/(T_K)) )
 
-  # Convert length to weight using scaling relationship
-  #Winf <- LwA * Linf**LwB
+#   #Convert length to weight using scaling relationship
+#   Winf <- LwA * Linf**LwB
 
-  #O2_demand <- ((W**(1 - d)) * exp(-j2/T_K) * PO2_thresh * exp(-j1/Tpref_K)) / 
-    #((Winf**(1 - d)) * exp(-j1/T_K) * exp(-j2/Tpref_K))
+#   O2_demand <- ((W**(1 - d)) * exp(-j2/T_K) * PO2_thresh * exp(-j1/Tpref_K)) / 
+#     ((Winf**(1 - d)) * exp(-j1/T_K) * exp(-j2/Tpref_K))
   
-  O2_demand
+#   O2_demand
+# } 
+
+OxyDemand <-function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8000, j1 = 4500, 
+                      Linf, LwA, LwB){
+   
+  T_K = T_C + 273.15
+  Tpref = Tpref + 273.15
+  
+  Winf=LwA*Linf^LwB #Convert Linf To Winf using a and b of length weight relationship
+  
+  a = (K/(1-d)) *(Winf**(1-d))*(exp(-j2/(Tpref)))/(PO2_thresh*(exp(-j1/(Tpref))))
+ 
+  OrigBasalMetO2Index = (K/(1-d))*(exp(-j2/(T_K)))*W^(1-d)/(a*(exp(-j1/(T_K))))
+ 
+  #Wmean is rTWinf / 3
+ 
+  OxyDemand<-as.numeric(OrigBasalMetO2Index)
+ 
 } 
+  
 
 
 rast_to_atm <- function(do, temp, so, depth){
