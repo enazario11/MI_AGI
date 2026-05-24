@@ -1,0 +1,61 @@
+Common name,Genus,Species,Fish type,rows,min_year,max_year,n_year,survey_1,survey_2,survey_3,survey_4,survey_5,enviro_layer,mode_depth
+Acadian redifsh,Sebastes,fasciatus,groundfish,,,,,,,,,,bottom,NA
+American plaice,Hippoglossoides,platessoides,groundfish,,,,,,,,,,bottom,NA
+Arrowtooth flounder,Atheresthes,stomias,groundfish,,,,,,,,,,bottom,NA
+Atlantic chub mackerel,Scomber,colias,forage fish,,,,,,,,,,NA,NA
+Atlantic cod,Gadus,morhua,groundfish,,,,,,,,,,bottom,NA
+Atlantic goliath grouper,Epinephelus,itajara,reef fish,,,,,,,,,,bottom,NA
+Atlantic halibut,Hippoglossus,hippoglossus,groundfish,,,,,,,,,,bottom,NA
+Atlantic herring,Clupea,harengus,forage fish,,,,,,,,,,NA,50
+Atlantic mackerel,Scomber,scombrus,forage fish,,,,,,,,,,NA,50
+Atlantic pollock,Pollachius,virens,groundfish,,,,,,,,,,bottom,NA
+Atlantic wolffish,Anarhichas,lupus,groundfish,,,,,,,,,,bottom,NA
+Black grouper,Mycteroperca,bonaci,reef fish,,,,,,,,,,bottom,NA
+Black sea bass,Centropristis,striata,reef fish,,,,,,,,,,bottom,NA
+Black sea bass,Centropristis,striata,reef fish,,,,,,,,,,bottom,NA
+Bluefish,Pomatomus,saltatrix,schooling; pelagic,,,,,,,,,,NA,25
+Bocacccio,Sebastes,paucispinis,rockfish,,,,,,,,,,bottom,NA
+Butterfish,Peprilus,triacanthus,schooling; semi-pelagic,,,,,,,,,,NA,100
+Canary rockfish,Sebastes,pinniger,rockfish,,,,,,,,,,bottom,NA
+Dover sole,Microstomus,pacificus,groundfish,,,,,,,,,,bottom,NA
+English sole,Parophrys,vetulus,groundfish,,,,,,,,,,bottom,NA
+Gag grouper,Mycteroperca,microlepis,reef fish,,,,,,,,,,bottom,NA
+Golden tilefish,Lopholatilus,chamaeleonticeps,reef fish,,,,,,,,,,bottom,NA
+Golden tilefish,Lopholatilus,chamaeleonticeps,reef fish,,,,,,,,,,bottom,NA
+Gray triggerfish,Balistes,capriscus,reef fish,,,,,,,,,,bottom,NA
+Haddock,Melanogrammus,aeglefinus,groundfish,,,,,,,,,,bottom,NA
+King mackerel,Scomberomorus,cavalla,coastal pelagic,,,,,,,,,,NA,25
+Lingcod,Ophiodon,elongatus,groundfish,,,,,,,,,,bottom,NA
+Monkfish,Lophius,americanus,groundfish,,,,,,,,,,bottom,NA
+Nassau grouper,Epinephelus,striatus,reef fish,,,,,,,,,,bottom,NA
+Northern anchovy,Engraulis,mordax,schooling,,,,,,,,,,NA,25
+Ocean pout,Zoarces,americanus,groundfish,,,,,,,,,,bottom,NA
+Pacific halibut,Hippoglossus,stenolepis,groundfish,,,,,,,,,,bottom,NA
+Pacific herring,Clupea,pallasii,schooling,,,,,,,,,,NA,100
+Pacific mackerel,Scomber,japonicus,schooling,,,,,,,,,,NA,100
+Pacific ocean perch,Sebastes,alutus,rockfish,,,,,,,,,,bottom,NA
+Pacific sardine,Sardinops,sagax,schooling,,,,,,,,,,NA,100
+Pacific whiting,Merluccius,productus,groundfish,,,,,,,,,,bottom,NA
+Petrale sole,Eopsetta,jordani,groundfish,,,,,,,,,,bottom,NA
+Red grouper,Epinephelus,morio,groundfish,,,,,,,,,,bottom,NA
+Red hake,Urophycis,chuss,semi-pelagic,,,,,,,,,,NA,100
+Red snapper,Lutjanus,campechanus,reef fish?,,,,,,,,,,bottom,NA
+Rex sole,Glyptocephalus,zachirus,groundfish,,,,,,,,,,bottom,NA
+Sablefish,Anoplopoma,fimbria,groundfish,,,,,,,,,,bottom,NA
+Scup,Stenotomus,chrysops,semi-pelagic,,,,,,,,,,NA,25
+Shortspine thornyhead,Sebastolobus,alascanus,rockfish,,,,,,,,,,bottom,NA
+Silver hake,Merluccius,bilinearis,semi-pelagic,,,,,,,,,,NA,100
+Spanish mackerel,Scomberomorus,maculatus,schooling; pelagic,,,,,,,,,,NA,15
+Summer flounder,Paralichthys,dentatus,groundfish,,,,,,,,,,bottom,NA
+Tilefish,Caulolatilus,microps,reef fish,,,,,,,,,,bottom,NA
+Tilefish,Caulolatilus,microps,reef fish,,,,,,,,,,bottom,NA
+Vermillion snapper,Rhomboplites,aurorubens,groundfish?,,,,,,,,,,bottom,NA
+White hake,Urophycis,tenuis,groundfish,,,,,,,,,,bottom,NA
+Widow rockfish,Sebastes,entomelas,rockfish,,,,,,,,,,bottom,NA
+Windowpane flounder,Scophthalmus,aquosus,groundfish,,,,,,,,,,bottom,NA
+Winter flounder,Pseudopleuronectes,americanus,groundfish,,,,,,,,,,bottom,NA
+Witch flounder,Glyptocephalus,cynoglossus,groundfish,,,,,,,,,,bottom,NA
+Wreckfish,Polyprion,americanus,reef fish,,,,,,,,,,bottom,NA
+Yelloweye rockfish,Sebastes,ruberriums,rockfish,,,,,,,,,,bottom,NA
+Yellowtail flounder,Limanda,ferruginea,groundfish,,,,,,,,,,bottom,NA
+Yellowtail rockfish,Sebastes,flavidus,rockfish,,,,,,,,,,bottom,NA
