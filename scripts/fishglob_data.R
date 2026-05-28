@@ -5,7 +5,9 @@ library(here)
 library(lubridate)
 
 #load dataset
-dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI")
+dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% 
+  filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
+  filter(year >= 1993)
 dat_spp <- read.csv(here("data/fishglob/spp_metdat.csv"))
 
 # MI/AGI species list -----------------------------------------------------

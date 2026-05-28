@@ -1,61 +1,61 @@
-Common name,Genus,Species,Fish.type,rows,min_year,max_year,n_year,survey_1,survey_2,survey_3,survey_4,survey_5,enviro_layer,mode_depth
-Acadian redifsh,Sebastes,fasciatus,groundfish,6993,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-American plaice,Hippoglossoides,platessoides,groundfish,9334,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Arrowtooth flounder,Atheresthes,stomias,groundfish,6414,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Atlantic chub mackerel,Scomber,colias,forage fish,0,Inf,#NAME?,0,NA,NA,NA,NA,NA,NA,NA
-Atlantic cod,Gadus,morhua,groundfish,9590,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Atlantic goliath grouper,Epinephelus,itajara,reef fish,1,2011,2011,1,SEUS-spring,NA,NA,NA,NA,bottom,NA
-Atlantic halibut,Hippoglossus,hippoglossus,groundfish,865,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Atlantic herring,Clupea,harengus,forage fish,11087,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,NA,50
-Atlantic mackerel,Scomber,scombrus,forage fish,5150,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,NA,NA,50
-Atlantic pollock,Pollachius,virens,groundfish,4658,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Atlantic wolffish,Anarhichas,lupus,groundfish,1413,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Black grouper,Mycteroperca,bonaci,reef fish,4,1972,2006,3,NEUS-Fall,NA,NA,NA,NA,bottom,NA
-Black sea bass,Centropristis,striata,reef fish,4869,1963,2020,57,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,bottom,NA
-Black sea bass,Centropristis,striata,reef fish,4869,1963,2020,57,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,bottom,NA
-Bluefish,Pomatomus,saltatrix,schooling; pelagic,6412,1964,2020,56,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,NA,25
-Bocacccio,Sebastes,paucispinis,rockfish,1488,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Butterfish,Peprilus,triacanthus,schooling; semi-pelagic,18311,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,NA,100
-Canary rockfish,Sebastes,pinniger,rockfish,1845,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Dover sole,Microstomus,pacificus,groundfish,12910,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-English sole,Parophrys,vetulus,groundfish,7133,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Gag grouper,Mycteroperca,microlepis,reef fish,33,1978,2015,15,NEUS-Fall,NEUS-Spring,SEUS-fall,NA,NA,bottom,NA
-Golden tilefish,Lopholatilus,chamaeleonticeps,reef fish,183,1963,2020,44,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Golden tilefish,Lopholatilus,chamaeleonticeps,reef fish,183,1963,2020,44,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Gray triggerfish,Balistes,capriscus,reef fish,430,1971,2020,48,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,bottom,NA
-Haddock,Melanogrammus,aeglefinus,groundfish,9683,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-King mackerel,Scomberomorus,cavalla,coastal pelagic,1969,1972,2020,44,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,NA,25
-Lingcod,Ophiodon,elongatus,groundfish,5494,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Monkfish,Lophius,americanus,groundfish,10218,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,NA,NA,bottom,NA
-Nassau grouper,Epinephelus,striatus,reef fish,0,Inf,#NAME?,0,NA,NA,NA,NA,NA,bottom,NA
-Northern anchovy,Engraulis,mordax,schooling,420,1977,2018,25,WCANN,WCTRI,NA,NA,NA,NA,25
-Ocean pout,Zoarces,americanus,groundfish,7555,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Pacific halibut,Hippoglossus,stenolepis,groundfish,1667,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Pacific herring,Clupea,pallasii,schooling,2142,1977,2018,25,WCANN,WCTRI,NA,NA,NA,NA,100
-Pacific mackerel,Scomber,japonicus,schooling,723,1967,2019,47,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,NA,100
-Pacific ocean perch,Sebastes,alutus,rockfish,1697,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Pacific sardine,Sardinops,sagax,schooling,322,1992,2018,20,WCANN,WCTRI,NA,NA,NA,NA,100
-Pacific whiting,Merluccius,productus,groundfish,9353,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Petrale sole,Eopsetta,jordani,groundfish,6919,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Red grouper,Epinephelus,morio,groundfish,4,1980,2011,4,NEUS-Spring,NEUS-Fall,SEUS-fall,NA,NA,bottom,NA
-Red hake,Urophycis,chuss,semi-pelagic,15806,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,NA,100
-Red snapper,Lutjanus,campechanus,reef fish?,54,1972,2019,28,NEUS-Fall,NEUS-Spring,SEUS-fall,SEUS-summer,NA,bottom,NA
-Rex sole,Glyptocephalus,zachirus,groundfish,10787,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Sablefish,Anoplopoma,fimbria,groundfish,10064,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Scup,Stenotomus,chrysops,semi-pelagic,5424,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,NA,25
-Shortspine thornyhead,Sebastolobus,alascanus,rockfish,6937,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Silver hake,Merluccius,bilinearis,semi-pelagic,23429,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,NA,NA,NA,100
-Spanish mackerel,Scomberomorus,maculatus,schooling; pelagic,4480,1971,2019,48,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,NA,15
-Summer flounder,Paralichthys,dentatus,groundfish,11291,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,bottom,NA
-Tilefish,Caulolatilus,microps,reef fish,36,1982,2020,18,NEUS-Spring,NEUS-Fall,NA,NA,NA,bottom,NA
-Tilefish,Caulolatilus,microps,reef fish,36,1982,2020,18,NEUS-Spring,NEUS-Fall,NA,NA,NA,bottom,NA
-Vermillion snapper,Rhomboplites,aurorubens,groundfish?,166,1972,2019,30,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-White hake,Urophycis,tenuis,groundfish,9360,1963,2019,57,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Widow rockfish,Sebastes,entomelas,rockfish,897,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
-Windowpane flounder,Scophthalmus,aquosus,groundfish,13340,1963,2020,58,NEUS-Fall,NEUS-Spring,SEUS-spring,SEUS-summer,SEUS-fall,bottom,NA
-Winter flounder,Pseudopleuronectes,americanus,groundfish,9341,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Witch flounder,Glyptocephalus,cynoglossus,groundfish,7404,1963,2020,58,NEUS-Fall,NEUS-Spring,NA,NA,NA,bottom,NA
-Wreckfish,Polyprion,americanus,reef fish,0,Inf,#NAME?,0,NA,NA,NA,NA,NA,bottom,NA
-Yelloweye rockfish,Sebastes,ruberriums,rockfish,0,Inf,#NAME?,0,NA,NA,NA,NA,NA,bottom,NA
-Yellowtail flounder,Limanda,ferruginea,groundfish,0,Inf,#NAME?,0,NA,NA,NA,NA,NA,bottom,NA
-Yellowtail rockfish,Sebastes,flavidus,rockfish,1719,1977,2018,25,WCANN,WCTRI,NA,NA,NA,bottom,NA
+"","Common.name","Genus","Species","Fish.type","rows","min_year","max_year","n_year","survey_1","survey_2","survey_3","survey_4","survey_5","enviro_layer","mode_depth"
+"1","Acadian redifsh","Sebastes","fasciatus","groundfish",3385,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"2","American plaice","Hippoglossoides","platessoides","groundfish",4279,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"3","Arrowtooth flounder","Atheresthes","stomias","groundfish",4776,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"4","Atlantic chub mackerel","Scomber","colias","forage fish",0,Inf,-Inf,0,NA,NA,NA,NA,NA,NA,NA
+"5","Atlantic cod","Gadus","morhua","groundfish",3629,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"6","Atlantic goliath grouper","Epinephelus","itajara","reef fish",1,2011,2011,1,"SEUS-spring",NA,NA,NA,NA,"bottom",NA
+"7","Atlantic halibut","Hippoglossus","hippoglossus","groundfish",390,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"8","Atlantic herring","Clupea","harengus","forage fish",7408,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,NA,50
+"9","Atlantic mackerel","Scomber","scombrus","forage fish",3346,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer",NA,NA,50
+"10","Atlantic pollock","Pollachius","virens","groundfish",1845,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"11","Atlantic wolffish","Anarhichas","lupus","groundfish",296,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"12","Black grouper","Mycteroperca","bonaci","reef fish",1,2006,2006,1,"NEUS-Fall",NA,NA,NA,NA,"bottom",NA
+"13","Black sea bass","Centropristis","striata","reef fish",3176,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall","bottom",NA
+"14","Black sea bass","Centropristis","striata","reef fish",3176,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall","bottom",NA
+"15","Bluefish","Pomatomus","saltatrix","schooling; pelagic",4409,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall",NA,25
+"16","Bocacccio","Sebastes","paucispinis","rockfish",916,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"17","Butterfish","Peprilus","triacanthus","schooling; semi-pelagic",11945,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall",NA,100
+"18","Canary rockfish","Sebastes","pinniger","rockfish",1139,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"19","Dover sole","Microstomus","pacificus","groundfish",10370,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"20","English sole","Parophrys","vetulus","groundfish",5503,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"21","Gag grouper","Mycteroperca","microlepis","reef fish",6,1993,2015,5,"NEUS-Spring","NEUS-Fall","SEUS-fall",NA,NA,"bottom",NA
+"22","Golden tilefish","Lopholatilus","chamaeleonticeps","reef fish",94,1993,2020,22,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"23","Golden tilefish","Lopholatilus","chamaeleonticeps","reef fish",94,1993,2020,22,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"24","Gray triggerfish","Balistes","capriscus","reef fish",198,1993,2020,27,"NEUS-Fall","NEUS-Spring","SEUS-spring","SEUS-summer","SEUS-fall","bottom",NA
+"25","Haddock","Melanogrammus","aeglefinus","groundfish",4737,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"26","King mackerel","Scomberomorus","cavalla","coastal pelagic",1644,1993,2020,28,"NEUS-Fall","NEUS-Spring","SEUS-spring","SEUS-summer","SEUS-fall",NA,25
+"27","Lingcod","Ophiodon","elongatus","groundfish",4317,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"28","Monkfish","Lophius","americanus","groundfish",5700,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring",NA,NA,"bottom",NA
+"29","Nassau grouper","Epinephelus","striatus","reef fish",0,Inf,-Inf,0,NA,NA,NA,NA,NA,"bottom",NA
+"30","Northern anchovy","Engraulis","mordax","schooling",337,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,NA,25
+"31","Ocean pout","Zoarces","americanus","groundfish",3728,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"32","Pacific halibut","Hippoglossus","stenolepis","groundfish",1162,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"33","Pacific herring","Clupea","pallasii","schooling",1412,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,NA,100
+"34","Pacific mackerel","Scomber","japonicus","schooling",440,1993,2019,26,"NEUS-Fall","NEUS-Spring","SEUS-spring","SEUS-summer","SEUS-fall",NA,100
+"35","Pacific ocean perch","Sebastes","alutus","rockfish",1084,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"36","Pacific sardine","Sardinops","sagax","schooling",271,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,NA,100
+"37","Pacific whiting","Merluccius","productus","groundfish",7032,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"38","Petrale sole","Eopsetta","jordani","groundfish",5492,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"39","Red grouper","Epinephelus","morio","groundfish",1,2011,2011,1,"SEUS-fall",NA,NA,NA,NA,"bottom",NA
+"40","Red hake","Urophycis","chuss","semi-pelagic",8497,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,NA,100
+"41","Red snapper","Lutjanus","campechanus","reef fish?",32,1995,2019,19,"NEUS-Spring","NEUS-Fall","SEUS-fall","SEUS-summer",NA,"bottom",NA
+"42","Rex sole","Glyptocephalus","zachirus","groundfish",8173,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"43","Sablefish","Anoplopoma","fimbria","groundfish",8022,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"44","Scup","Stenotomus","chrysops","semi-pelagic",2886,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,NA,25
+"45","Shortspine thornyhead","Sebastolobus","alascanus","rockfish",5987,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"46","Silver hake","Merluccius","bilinearis","semi-pelagic",11662,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring",NA,NA,NA,100
+"47","Spanish mackerel","Scomberomorus","maculatus","schooling; pelagic",3730,1993,2019,27,"NEUS-Fall","NEUS-Spring","SEUS-spring","SEUS-summer","SEUS-fall",NA,15
+"48","Summer flounder","Paralichthys","dentatus","groundfish",7721,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall","bottom",NA
+"49","Tilefish","Caulolatilus","microps","reef fish",34,1994,2020,16,"NEUS-Fall","NEUS-Spring",NA,NA,NA,"bottom",NA
+"50","Tilefish","Caulolatilus","microps","reef fish",34,1994,2020,16,"NEUS-Fall","NEUS-Spring",NA,NA,NA,"bottom",NA
+"51","Vermillion snapper","Rhomboplites","aurorubens","groundfish?",26,1993,2019,16,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"52","White hake","Urophycis","tenuis","groundfish",4149,1993,2019,27,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"53","Widow rockfish","Sebastes","entomelas","rockfish",577,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
+"54","Windowpane flounder","Scophthalmus","aquosus","groundfish",7897,1993,2020,28,"NEUS-Spring","NEUS-Fall","SEUS-spring","SEUS-summer","SEUS-fall","bottom",NA
+"55","Winter flounder","Pseudopleuronectes","americanus","groundfish",4869,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"56","Witch flounder","Glyptocephalus","cynoglossus","groundfish",3788,1993,2020,28,"NEUS-Spring","NEUS-Fall",NA,NA,NA,"bottom",NA
+"57","Wreckfish","Polyprion","americanus","reef fish",0,Inf,-Inf,0,NA,NA,NA,NA,NA,"bottom",NA
+"58","Yelloweye rockfish","Sebastes","ruberriums","rockfish",0,Inf,-Inf,0,NA,NA,NA,NA,NA,"bottom",NA
+"59","Yellowtail flounder","Limanda","ferruginea","groundfish",0,Inf,-Inf,0,NA,NA,NA,NA,NA,"bottom",NA
+"60","Yellowtail rockfish","Sebastes","flavidus","rockfish",1052,1995,2018,19,"WCANN","WCTRI",NA,NA,NA,"bottom",NA
