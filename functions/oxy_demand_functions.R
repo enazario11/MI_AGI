@@ -20,7 +20,7 @@ do_to_atm <- function(do, t, s, thresh = FALSE) {
   }
 
   # seawater density to move from a per-kg to a per-volume basis
-  rho <- sw_dens(S = s, t = t, P = 1.013253) # kg/m3
+  rho <- marelac::sw_dens(S = s, t = t, P = 1.013253) # kg/m3
 
   # mol/kg -> mmol/m3 
   do_mmol_m3 <- do * 1000 * rho 
