@@ -52,7 +52,11 @@ nwa_bo2 <- rast(here("data/enviro/nwa/do/raw/btm_o2.nwa.full.hcast.monthly.regri
 nep_stemp <- rast(here("data/enviro/nep/temp/raw/tos.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
 ##### bottom ####
-nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+#nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+#nep_btemp <- rotate(nep_btemp)
+#writeCDF(nep_btemp, here("data/enviro/nep/temp/nep_btemp_rot.nc"))
+
+nep_btemp <- rast(here("data/enviro/nep/temp/nep_btemp_rot.nc"))
 
 #### salinity #####
 #filter for bottom salinity
@@ -76,7 +80,7 @@ dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>%
   filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
   filter(year >= 1993) 
 
-get_Tpref <- function(sp_dat, temp_dat, enviro_layer){
+get_Tpref <- function(sp_dat, temp_dat, region){
   
   sp_dat$Tpref <- NA
   tpref_dat <- data.frame()
@@ -95,16 +99,12 @@ get_Tpref <- function(sp_dat, temp_dat, enviro_layer){
   
       range_box <- ext(lon_min, lon_max, lat_min, lat_max)
   
-      curr_glob$date <- paste0(curr_glob$year,"-", curr_glob$month, "-", curr_glob$day)
-      curr_glob$date <- ymd(curr_glob$date)
+      curr_glob$date <- paste0(curr_glob$year,"-", curr_glob$month)
+      curr_glob$date <- ym(curr_glob$date)
       survey_start <- min(curr_glob$date)
       survey_end <- max(curr_glob$date)
   
-  if(is.na(enviro_layer)) {
-
-      temp_dat$Tpref = NA
-
-  } else if(enviro_layer == "bottom" & region == "nwa"){
+  if(region == "nwa"){
               
             #filter for date range
               target_dates <- time(nwa_btemp) >= survey_start & time(nwa_btemp) <= survey_end
@@ -112,14 +112,14 @@ get_Tpref <- function(sp_dat, temp_dat, enviro_layer){
             
             #filter for species range
               nwa_btemp_crop <- crop(nwa_btemp_sub, range_box)
-
+    
             #calculate median across area for Tpref
               med_temp <- median(nwa_btemp_crop)
               global_avg <- terra::global(med_temp, fun = "mean", na.rm = TRUE)
             
               temp_dat$Tpref = global_avg[1,1]
 
-  } else if(enviro_layer == "bottom" & region == "nep"){
+  } else if(region == "nep"){
       
     #filter for date range
       target_dates <- time(nep_btemp) >= survey_start & time(nep_btemp) <= survey_end
@@ -144,5 +144,16 @@ get_Tpref <- function(sp_dat, temp_dat, enviro_layer){
 return(tpref_dat)
 
 }
+
+#simplify input data
+sp_dat_nwa<- sp_dat %>% filter(enviro_layer == "bottom" & region == "nwa")
+nwa_tpref <- get_Tpref(sp_dat = sp_dat_nwa, temp_dat = nwa_btemp, region = "nwa")
+
+sp_dat_nep <- sp_dat %>% filter(enviro_layer == "bottom" & region == "nep")
+nep_tpref <- get_Tpref(sp_dat = sp_dat_nep, temp_dat = nep_btemp, region = "nep")
+
+all_tpref <- rbind(nwa_tpref, nep_tpref) %>% select(c(Common.name, Tpref))
+all_tpref2 <- merge(sp_dat, all_tpref, all.x = TRUE)
+#saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpef.rds"))
 
 ### OxyThresh #####
