@@ -32,44 +32,24 @@ for(i in 1:nrow(dat_spp)){
 write.csv(dat_spp, here("data/temp/glob_metdat.csv"))
 
 # look at depth layers for pelagic/schooling fish
-temp_glob <- dat_glob %>% filter(accepted_name == "Clupea harengus")
-plot(temp_glob$depth, temp_glob$num) #50m
+sp_dat <- read.csv(here("data/fishglob/glob_metdat.csv"))
+pel_dat <- sp_dat %>% filter(enviro_layer == "pelagic")
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Scomber scombrus")
-plot(temp_glob$depth, temp_glob$num) #50m
+for(i in 1:nrow(pel_dat)){
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Pomatomus saltatrix")
-plot(temp_glob$depth, temp_glob$num) #25m
+  curr_sp <- unique(pel_dat$Common.name)[i]
+  temp_dat = sp_dat %>% filter(Common.name == curr_sp)
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Peprilus triacanthus")
-plot(temp_glob$depth, temp_glob$num) #100m
+  curr_glob <- dat_glob %>% 
+    filter(accepted_name == paste(temp_dat$Genus, temp_dat$Species) & num > 0) 
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Scomberomorus cavalla")
-plot(temp_glob$depth, temp_glob$num) #25m
+  #filter for survey rows where more than the 25% quantile were pulled to make sure it's "true" habitat
+  low_quant_num <- quantile(curr_glob$num, 0.25)
+  curr_glob <- curr_glob %>%
+    filter(num > low_quant_num)
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Engraulis mordax")
-plot(temp_glob$depth, temp_glob$num) #25m
+  pel_dat$med_depth[i] <- median(curr_glob$depth, na.rm = TRUE)
+  pel_dat$min_depth[i] <- min(curr_glob$depth, na.rm = TRUE)
+  pel_dat$top_quant_depth[i] <- quantile(curr_glob$num, 0.75)
 
-temp_glob <- dat_glob %>% filter(accepted_name == "Clupea pallasii")
-plot(temp_glob$depth, temp_glob$num) #100m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Scomber japonicus")
-plot(temp_glob$depth, temp_glob$num) #100m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Sardinops sagax")
-plot(temp_glob$depth, temp_glob$num) #100m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Epinephelus morio")
-plot(temp_glob$depth, temp_glob$num) #50m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Urophycis chuss")
-plot(temp_glob$depth, temp_glob$num) #100m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Stenotomus chrysops")
-plot(temp_glob$depth, temp_glob$num) #25m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Merluccius bilinearis")
-plot(temp_glob$depth, temp_glob$num) #1000m
-
-temp_glob <- dat_glob %>% filter(accepted_name == "Scomberomorus maculatus")
-plot(temp_glob$depth, temp_glob$num) #50m
+}

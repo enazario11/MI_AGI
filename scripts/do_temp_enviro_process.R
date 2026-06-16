@@ -7,70 +7,36 @@ source(here("functions/oxy_demand_functions.R"))
 
 ### load NWA data #####
 #### temperature #####
-##### surface ####
-nwa_stemp <- rast(here("data/enviro/nwa/temp/raw/tos.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
-
-##### bottom ####
 nwa_btemp <- rast(here("data/enviro/nwa/temp/raw/tob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
 #### salinity #####
-nwa_sal <- rast(here("data/enviro/nwa/salinity/raw/so.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
-
-#filter for bottom salinity
-  #group by depth layer
-z <- depth(nwa_sal)
-
-  #calculate mean across time per depth layer
-nwa_sal_avg <- tapp(nwa_sal, z, mean)
-
-  #keep deepest cell with a non-NA value
-last_non_na <- function(x) {
-  if (all(is.na(x))) {
-    return(NA) # Return NA if all layers are NA
-  } else {
-    non_na_idx <- which(!is.na(x))
-    return(x[utils::tail(non_na_idx, 1)]) # Keep the last non-NA value
-  }
-}
-
-nwa_sal_btm <- app(nwa_sal_avg, fun = last_non_na)
+nwa_sal <- rast(here("data/enviro/nwa/salinity/raw/sob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
 #### DO #####
-##### surface ####
-nwa_so2 <- rast(here("data/enviro/nwa/do/raw/o2_csurf.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
-
-#convert to atm
-
-##### bottom ####
 nwa_bo2 <- rast(here("data/enviro/nwa/do/raw/btm_o2.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
 #convert to atm
 
+
 ### load NEP data #####
 #### temperature #####
-##### surface ####
-nep_stemp <- rast(here("data/enviro/nep/temp/raw/tos.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
-##### bottom ####
-#nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
-#nep_btemp <- rotate(nep_btemp)
-#writeCDF(nep_btemp, here("data/enviro/nep/temp/nep_btemp_rot.nc"))
+  #nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+  #nep_btemp <- rotate(nep_btemp)
+  #writeCDF(nep_btemp, here("data/enviro/nep/temp/nep_btemp_rot.nc"))
 
 nep_btemp <- rast(here("data/enviro/nep/temp/nep_btemp_rot.nc"))
 
 #### salinity #####
-#filter for bottom salinity
+nep_sal <- rast(here("data/enviro/nep/salinity/raw/sob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+
+
 
 #### DO #####
-##### surface ####
-nep_so2 <- rast(here("data/enviro/nep/do/raw/o2_csurf.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
-
-#convert to atm
-
-##### bottom ####
 nep_bo2 <- rast(here("data/enviro/nep/do/raw/btm_o2.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
 #convert to atm
+
 
 
 ### Tpref ######
@@ -78,82 +44,124 @@ sp_dat <- read.csv(here("data/fishglob/glob_metdat.csv"))
 
 dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% 
   filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
-  filter(year >= 1993) 
+  filter(year >= 1993 & num > 0) 
 
 get_Tpref <- function(sp_dat, temp_dat, region){
   
-  sp_dat$Tpref <- NA
+  sp_dat$Tpref_med <- NA
   tpref_dat <- data.frame()
 
-  for(i in 1:nrow(sp_dat)){
+  for(i in 1:nrow(sp_dat)){ 
   curr_sp = sp_dat$Common.name[i]
   temp_dat = sp_dat %>% filter(Common.name == curr_sp)
+  enviro_layer = temp_dat$enviro_layer
 
-  curr_glob = dat_glob %>% filter(accepted_name == paste(temp_dat$Genus, temp_dat$Species))
-
+  #filter for current species and remove survey rows w/ 0 counts
+  curr_glob <- dat_glob %>% 
+    filter(accepted_name == paste(temp_dat$Genus, temp_dat$Species)) 
+  
+  #filter for survey rows where more than the 25% quantile were pulled to make sure it's "true" habitat
+  low_quant_num <- quantile(curr_glob$num, 0.25)
+  curr_glob <- curr_glob %>%
+    filter(num > low_quant_num)
+  
   if(nrow(curr_glob) > 1){  
-      lat_max <- max(curr_glob$latitude) + 2
-      lat_min <- min(curr_glob$latitude) - 2
-      lon_max <- max(curr_glob$longitude) +2
-      lon_min <- min(curr_glob$longitude) -2
-  
-      range_box <- ext(lon_min, lon_max, lat_min, lat_max)
-  
+
+      #create bounding polygon to crop raster with
+      pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
+      hull <- convHull(pts)
+    
+      #save shapefile and plot of convex hull
+      dir.create(here(paste0("data/fish_hull/", curr_sp)))
+      writeVector(hull, here(paste0("data/fish_hull/",curr_sp,"/", curr_glob$accepted_name, ".shp")))
+    
+      png(paste0("data/fish_hull/", curr_sp, "/", curr_sp, ".png"), width = 700, height = 700, res = 120)
+      plot(hull)
+      plot(pts, add = TRUE, col = "cornflowerblue", main = curr_sp)
+      dev.off()
+
+      #set date time column to subset 
       curr_glob$date <- paste0(curr_glob$year,"-", curr_glob$month)
       curr_glob$date <- ym(curr_glob$date)
-      survey_start <- min(curr_glob$date)
-      survey_end <- max(curr_glob$date)
   
-  if(region == "nwa"){
+  if(region == "nwa" & enviro_layer == "bottom"){
               
             #filter for date range
-              target_dates <- time(nwa_btemp) >= survey_start & time(nwa_btemp) <= survey_end
+              target_dates <- time(nwa_btemp) >= ym("1995-01") & time(nwa_btemp) <= ym("2019-12")
               nwa_btemp_sub <- nwa_btemp[[target_dates]]
             
             #filter for species range
-              nwa_btemp_crop <- crop(nwa_btemp_sub, range_box)
+               nwa_btemp_crop <- crop(nwa_btemp_sub, hull)
+               nwa_btemp_mask <- mask(nwa_btemp_crop, hull)
     
             #calculate median across area for Tpref
-              med_temp <- median(nwa_btemp_crop)
+              med_temp <- median(nwa_btemp_mask)
               global_avg <- terra::global(med_temp, fun = "mean", na.rm = TRUE)
             
-              temp_dat$Tpref = global_avg[1,1]
+              temp_dat$Tpref_med = global_avg[1,1]
 
-  } else if(region == "nep"){
+  } else if(region == "nwa" & enviro_layer == "pelagic"){
       
     #filter for date range
-      target_dates <- time(nep_btemp) >= survey_start & time(nep_btemp) <= survey_end
+      target_dates <- time(nwa_btemp) >= ym("1995-01") & time(nwa_btemp) <= ym("2019-12")
+      nwa_btemp_sub <- nwa_btemp[[target_dates]]
+    
+    
+    
+    
+
+  } else if(region == "nep" & enviro_layer == "bottom"){
+      
+    #filter for date range
+      target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
       nep_btemp_sub <- nep_btemp[[target_dates]]
     
     #filter for species range
-      nep_btemp_crop <- crop(nep_btemp_sub, range_box)
+      nep_btemp_crop <- crop(nep_btemp_sub, hull)
+      nep_btemp_mask <- mask(nep_btemp_crop, hull)
 
     #calculate median across area for Tpref
-      med_temp <- median(nep_btemp_crop)
+      med_temp <- median(nep_btemp_mask)
       global_avg <- terra::global(med_temp, fun = "mean", na.rm = TRUE)
     
-      temp_dat$Tpref = global_avg[1,1]
+      temp_dat$Tpref_med = global_avg[1,1]
+
+  } else if(region == "nep" & enviro_layer == "pelagic"){
+      
+    #filter for date range
+      target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
+      nep_btemp_sub <- nep_btemp[[target_dates]]
+    
+    
+    
 
   }
   } 
 
   #save values
   tpref_dat <- rbind(tpref_dat, temp_dat)
-}
+  }
 
 return(tpref_dat)
 
 }
 
 #simplify input data
-sp_dat_nwa<- sp_dat %>% filter(enviro_layer == "bottom" & region == "nwa")
+sp_dat_nwa <- sp_dat %>% filter(region == "nwa")
 nwa_tpref <- get_Tpref(sp_dat = sp_dat_nwa, temp_dat = nwa_btemp, region = "nwa")
 
-sp_dat_nep <- sp_dat %>% filter(enviro_layer == "bottom" & region == "nep")
+sp_dat_nep <- sp_dat %>% filter(region == "nep")
 nep_tpref <- get_Tpref(sp_dat = sp_dat_nep, temp_dat = nep_btemp, region = "nep")
 
 all_tpref <- rbind(nwa_tpref, nep_tpref) %>% select(c(Common.name, Tpref))
 all_tpref2 <- merge(sp_dat, all_tpref, all.x = TRUE)
-#saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpef.rds"))
+
+#save tpref data
+saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpef.rds"))
 
 ### OxyThresh #####
+sp_dat_tpref <- readRDS(here("data/agi/sp_dat_tpef.rds"))
+
+
+
+
