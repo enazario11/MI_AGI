@@ -19,11 +19,17 @@ do_to_atm <- function(do, t, s, thresh = FALSE) {
     s <- terra::values(s)[, 1]
   }
 
-  # seawater density to move from a per-kg to a per-volume basis
-  rho <- marelac::sw_dens(S = s, t = t, P = 1.013253) # kg/m3
+  for(i in 1:length(do)){
+    if(!is.na(do[i]) && !is.na(t[i]) && !is.na(s[i])){
 
-  # mol/kg -> mmol/m3 
-  do_mmol_m3 <- do * 1000 * rho 
+      # seawater density to move from a per-kg to a per-volume basis
+        rho <- marelac::sw_dens(S = s[i], t = t[i], P = 1.013253) # kg/m3
+
+        # mol/kg -> mmol/m3 
+        do_mmol_m3 <- do * 1000 * rho 
+      
+    }
+  }
 
   po2_atm <-  rep(NA_real_, length(do_mmol_m3))
 
