@@ -7,7 +7,10 @@ library(lubridate)
 #load dataset
 dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% 
   filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
-  filter(year >= 1993)
+  filter(year >= 1993 & num > 0) %>% 
+  filter(accepted_name != "Scomber japonicus" | #pacific mackeral somehow had locs from NEUS/SEUS surveys?
+        (accepted_name == "Scomber japonicus" & survey %in% c("WCANN", "WCTRI")))
+
 dat_spp <- read.csv(here("data/fishglob/spp_metdat.csv"))
 
 # MI/AGI species list -----------------------------------------------------
@@ -29,7 +32,7 @@ for(i in 1:nrow(dat_spp)){
 
 }
 
-write.csv(dat_spp, here("data/temp/glob_metdat.csv"))
+write.csv(dat_spp, here("data/fishglob/glob_metdat.csv"), row.names = FALSE)
 
 # look at depth layers for pelagic/schooling fish
 sp_dat <- read.csv(here("data/fishglob/glob_metdat.csv"))
@@ -53,3 +56,4 @@ for(i in 1:nrow(pel_dat)){
   pel_dat$top_quant_depth[i] <- quantile(curr_glob$num, 0.75)
 
 }
+
