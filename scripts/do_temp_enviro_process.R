@@ -10,7 +10,7 @@ source(here("functions/oxy_demand_functions.R"))
 nwa_btemp <- rast(here("data/enviro/nwa/temp/raw/tob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
 #### all z temperature #####
-nwa_temp <- rast(here("data/enviro/nwa/temp/raw/thetao.nwa.full.hcast.monthly.raw.r20230520.199301-201912.nc"))
+nwa_temp <- rast(here("data/enviro/nwa/temp/raw/thetao.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
 #### bottom salinity #####
 nwa_bsal <- rast(here("data/enviro/nwa/salinity/raw/sob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
@@ -26,7 +26,7 @@ nwa_bo2_atm <- rast(here("data/enviro/nwa/do/nwa_bo2_atm.nc"))
 
 ### load NEP data #####
 #### bottom temperature #####
-nep_btemp <- rast(here("data/enviro/nep/temp/nep_btemp_rot.nc"))
+nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
 #### all z temperature #####
 nep_temp <- rast(here("data/enviro/nep/temp/raw/thetao.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
@@ -46,7 +46,10 @@ nep_bo2_atm <- rast(here("data/enviro/nep/do/nep_bo2_rot.nc"))
 ### Tpref ######
 sp_dat <- read.csv(here("data/fishglob/glob_metdat.csv"))
 
-dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% 
+load(here("data/fishglob/FishGlob_public_clean.RData"))
+dat_glob <- data
+dat_glob <- dat_glob %>% #readRDS(here("data/fishglob/fishglob_usa.rds"))
+  filter(country == "United States") %>%
   filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
   filter(year >= 1993 & num > 0) %>% 
   filter(accepted_name != "Scomber japonicus" | #pacific mackeral somehow had locs from NEUS/SEUS surveys?

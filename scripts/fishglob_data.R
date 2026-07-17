@@ -5,7 +5,10 @@ library(here)
 library(lubridate)
 
 #load dataset
-dat_glob <- readRDS(here("data/fishglob/fishglob_usa.rds")) %>% 
+load(here("data/fishglob/FishGlob_public_clean.RData"))
+dat_glob <- data
+dat_glob <- dat_glob %>% #readRDS(here("data/fishglob/fishglob_usa.rds"))
+  filter(country == "United States") %>%
   filter(survey == "NEUS" | survey == "SEUS" | survey == "WCANN" | survey == "WCTRI") %>%
   filter(year >= 1993 & num > 0) %>% 
   filter(accepted_name != "Scomber japonicus" | #pacific mackeral somehow had locs from NEUS/SEUS surveys?
