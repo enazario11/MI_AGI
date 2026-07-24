@@ -30,10 +30,6 @@ nwa_bo2_atm <- rast(here("data/enviro/nwa/do/nwa_bo2_atm.nc"))
 #### all z do #####
 nwa_o2 <- rast(here("data/enviro/nwa/do/raw/o2.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
 
-#convert to atm 
-nwa_o2_atm <- do_to_atm(do = nwa_o2, t = nwa_temp, s = nwa_sal, thresh = FALSE)
-writeCDF(nwa_o2_atm, here("data/enviro/nwa/do/nwa_o2_atm.nc"))
-
 ### load NEP data #####
 #### bottom temperature #####
 nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
@@ -58,10 +54,6 @@ nep_bo2_atm <- rast(here("data/enviro/nep/do/nep_bo2_atm.nc"))
 
 #### all z do #####
 nep_o2 <- rast(here("data/enviro/nep/do/raw/o2.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
-
-#convert to atm 
-nep_o2_atm <- do_to_atm(do = nep_o2, t = nep_temp, s = nep_sal, thresh = FALSE)
-writeCDF(nep_o2_atm, here("data/enviro/nep/do/nep_o2_atm.nc"))
 
 ### Tpref ######
 sp_dat <- read.csv(here("data/fishglob/glob_metdat.csv"))
@@ -285,24 +277,63 @@ saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpref.rds"))
 sp_dat_tpref <- readRDS(here("data/agi/sp_dat_tpref.rds"))
 
 ### OxyThresh #####
-#crop o2, temp, and sal rasters according to one large unionized hull (project first). See how long converting this to atm takes otherwise start species-specific step there. If quick, take species hull crop and calc median then quantile.
-#create separate polygons for nep and nwa
-sp_pts <- st_as_sf(
-  dat_glob,
+#nwa union hull
+nwa_glob <- dat_glob %>% filter(survey == "NEUS" | survey == "SEUS")
+
+nwa_pts <- st_as_sf(
+  nwa_glob,
   coords = c("longitude", "latitude"),
-  crs = 4326,
+  crs = crs(nwa_o2),
   remove = FALSE
 )
 
-sp_hulls <- sp_pts %>%
+nwa_hulls <- nwa_pts %>%
   group_by(accepted_name) %>%
   summarize(geometry = st_combine(geometry), .groups = "drop") %>%
   st_convex_hull()
 
-hull_union <- st_union(sp_hulls)
+nwa_union <- st_union(nwa_hulls)
 
+  #save for python processing to get crop file (crop_enviro_zarr.py file)
+nwa_union_sf <- st_sf(region = "nwa", geometry = nwa_union)
+st_write(nwa_union_sf, "data/enviro/nwa/nwa_union.gpkg", delete_dsn = TRUE)
 
+#nep union hull
+nep_glob <- dat_glob %>% filter(survey == "WCANN" | survey == "WCTRI")
 
+nep_pts <- st_as_sf(
+  nep_glob,
+  coords = c("longitude", "latitude"),
+  crs = crs(nep_o2),
+  remove = FALSE
+)
+
+nep_hulls <- nep_pts %>%
+  group_by(accepted_name) %>%
+  summarize(geometry = st_combine(geometry), .groups = "drop") %>%
+  st_convex_hull()
+
+nep_union <- st_union(nep_hulls)
+
+  #save for python processing to get crop file (crop_enviro_zarr.py file)
+nep_union_sf <- st_sf(region = "nep", geometry = nep_union)
+st_write(nep_union_sf, "data/enviro/nep/nep_union.gpkg", delete_dsn = TRUE)
+
+#Load cropped rasters and convert DO to atm 
+nwa_o2_crop <- rast(here("data/enviro/nwa/do/processed/o2_nwa_crop.nc"))
+nwa_temp_crop <- rast(here("data/enviro/nwa/temp/processed/temp_nwa_crop.nc"))
+nwa_sal_crop <- rast(here("data/enviro/nwa/salinity/processed/sal_nwa_crop.nc"))
+
+nwa_do_atm <- do_to_atm(do = nwa_o2_crop, t = nwa_temp_crop, s = nwa_sal_crop)
+
+#nep
+nep_o2_crop <- rast(here("data/enviro/nep/do/processed/o2_nep_crop.nc"))
+nep_temp_crop <- rast(here("data/enviro/nep/temp/processed/temp_nep_crop.nc"))
+nep_sal_crop <- rast(here("data/enviro/nep/salinity/processed/sal_nep_crop.nc"))
+
+nep_do_atm <- do_to_atm(do = nep_o2_crop, t = nep_temp_crop, s = nep_sal_crop)
+
+#get oxythresh values across species
 get_OxyThresh <- function(sp_dat, region){
   
   sp_dat$thresh_med <- NA
@@ -423,77 +454,11 @@ get_OxyThresh <- function(sp_dat, region){
     
   } else if(region == "nep" & enviro_layer == "bottom"){
       
-    #filter for date range
-      target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
-      nep_btemp_sub <- nep_btemp[[target_dates]]
-    
-    #calculate median across area for Tpref and update crs for cropping
-      med_btemp <- median(nep_btemp_sub)
-      med_btemp_crs <- project(med_btemp, "EPSG:4326")
-      med_btemp_rot <- rotate(med_btemp_crs)
 
-    #filter for species range
-      nep_btemp_crop <- crop(med_btemp_rot, hull, mask = TRUE)
-
-    #take mean
-      global_avg <- terra::global(nep_btemp_crop, fun = "mean", na.rm = TRUE)
-    
-      temp_dat$Tpref_med = global_avg[1,1]
 
   } else if(region == "nep" & enviro_layer == "pelagic"){
       
-    #filter for date range
-      target_dates <- time(nep_temp) >= ym("1995-01") & time(nep_temp) <= ym("2019-12")
-      nep_temp_sub <- nep_temp[[target_dates]]
-    
-     # get right depth layers
-      min_layer <- which.min(abs(depth(nep_temp_sub) - sp_dat$min_depth[i]))
-      min_seq <- seq(from = min_layer, to = nlyr(nep_temp_sub), by = length(unique(depth(nep_temp_sub))))
-
-      med_layer <- which.min(abs(depth(nep_temp_sub) - sp_dat$med_depth[i]))
-      med_seq <- seq(from = med_layer, to = nlyr(nep_temp_sub), by = length(unique(depth(nep_temp_sub))))
-    
-      quant_layer <- which.min(abs(depth(nep_temp_sub) - sp_dat$quant_depth[i]))
-      quant_seq <- seq(from = quant_layer, to = nlyr(nep_temp_sub), by = length(unique(depth(nep_temp_sub))))
-    
-      min_temp_rast <- nep_temp_sub[[min_seq]]
-      med_temp_rast <- nep_temp_sub[[med_seq]]
-      quant_temp_rast <- nep_temp_sub[[quant_seq]]
-
-    #calculate median across area for Tpref, Tmin, Tquant
-    #min depth Tpref
-    min_temp_med <- median(min_temp_rast)
-
-    #Update CRS, crop, and take mean
-    min_temp_crs <- project(min_temp_med, "EPSG:4326")
-    min_temp_rot <- rotate(min_temp_crs)
-    min_temp_crop <- crop(min_temp_rot, hull, mask = TRUE)
-    min_global_avg <- terra::global(min_temp_crop, fun = "mean", na.rm = TRUE)
-  
-    temp_dat$Tpref_min = min_global_avg[1,1]
-    
-    #median depth Tpref
-    med_temp_med <- median(med_temp_rast)
-
-    #Update CRS, crop, and take mean
-    med_temp_crs <- project(med_temp_med, "EPSG:4326")
-    med_temp_rot <- rotate(med_temp_crs)
-    med_temp_crop <- crop(med_temp_rot, hull, mask = TRUE)
-    med_global_avg <- terra::global(med_temp_crop, fun = "mean", na.rm = TRUE)
-  
-    temp_dat$Tpref_med = med_global_avg[1,1]
-
-    #75% quantile depth Tpref
-    quant_temp_med <- median(quant_temp_rast)
-
-    #Update CRS, crop, and take mean
-    quant_temp_crs <- project(quant_temp_med, "EPSG:4326")
-    quant_temp_rot <- rotate(quant_temp_crs)
-    quant_temp_crop <- crop(quant_temp_rot, hull, mask = TRUE)
-    quant_global_avg <- terra::global(quant_temp_crop, fun = "mean", na.rm = TRUE)
-  
-    temp_dat$Tpref_quant = quant_global_avg[1,1]
-
+   
   }
   } 
 

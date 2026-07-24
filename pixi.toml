@@ -1,0 +1,20 @@
+[workspace]
+authors = ["enazario11 <enazario@ucsc.edu>"]
+channels = ["conda-forge"]
+name = "MI_AGI"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = ">=3.12,<3.14"
+xarray = "*"
+netcdf4 = "*"
+zarr = "*"
+geopandas = ">=1.1.4,<2"
+rioxarray = ">=0.22.0,<0.23"
+dask = ">=2026.7.1,<2027"
+matplotlib = ">=3.11.1,<4"
+numpy = ">=2.5.1,<3"
+regionmask = ">=0.13.0,<0.14"
