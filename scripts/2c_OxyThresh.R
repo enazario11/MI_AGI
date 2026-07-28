@@ -3,8 +3,6 @@ library(tidyverse)
 library(here)
 library(terra)
 library(sf)
-library(foreach)
-library(doParallel)
 source(here("functions/oxy_demand_functions.R"))
 
 ### load NWA data #####
@@ -80,7 +78,7 @@ get_OxyThresh <- function(sp_dat, region){
       nwa_bo2_sub <- nwa_bo2_atm[[target_dates]]
 
     #calculate median across area for Tpref and update crs for cropping
-      med_bo2 <- median(nwa_bo2_sub)
+      med_bo2 <- median(nwa_bo2_sub, na.rm = TRUE)
 
     #filter for species range
       nwa_bo2_crop <- crop(med_bo2, hull, mask = TRUE)
@@ -158,7 +156,7 @@ get_OxyThresh <- function(sp_dat, region){
       nep_bo2_sub <- nep_bo2_atm[[target_dates]]
 
     #calculate median across area for Tpref and update crs for cropping
-      med_bo2 <- median(nep_bo2_sub)
+      med_bo2 <- median(nep_bo2_sub, na.rm = TRUE)
       med_bo2_rot <- rotate(med_bo2)
 
     #filter for species range

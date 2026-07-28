@@ -31,7 +31,7 @@ dat_glob <- dat_glob %>% #readRDS(here("data/fishglob/fishglob_usa.rds"))
         (accepted_name == "Scomber japonicus" & survey %in% c("WCANN", "WCTRI")))
 
 ### Tpref function ####
-get_Tpref <- function(sp_dat, temp_dat, region){
+get_Tpref <- function(sp_dat, region){
   
   sp_dat$Tpref_med <- NA
   sp_dat$Tpref_min <- NA
@@ -68,18 +68,13 @@ get_Tpref <- function(sp_dat, temp_dat, region){
       plot(pts, add = TRUE, col = "cornflowerblue", main = curr_sp)
       dev.off()
 
-      #set date time column to subset 
-      curr_glob$date <- paste0(curr_glob$year,"-", curr_glob$month)
-      curr_glob$date <- ym(curr_glob$date)
-  
-  if(region == "nwa" & enviro_layer == "bottom"){
+  if(region == "nwa" && enviro_layer == "bottom"){
             #filter for date range
               target_dates <- time(nwa_btemp) >= ym("1995-01") & time(nwa_btemp) <= ym("2019-12")
               nwa_btemp_sub <- nwa_btemp[[target_dates]]
     
             #calculate median across area for Tpref and update crs for cropping
-              med_btemp <- median(nwa_btemp_sub)
-              med_btemp_crs <- project(med_btemp, "EPSG:4326")
+              med_btemp <- median(nwa_btemp_sub, na.rm = TRUE)
     
             #filter for species range
                nwa_btemp_crop <- crop(med_btemp_crs, hull, mask = TRUE)
@@ -89,7 +84,7 @@ get_Tpref <- function(sp_dat, temp_dat, region){
             
               temp_dat$Tpref_med = global_avg[1,1]
 
-  } else if(region == "nwa" & enviro_layer == "pelagic"){
+  } else if(region == "nwa" && enviro_layer == "pelagic"){
 
     #filter for date range
       target_dates <- time(nwa_temp) >= ym("1995-01") & time(nwa_temp) <= ym("2019-12")
@@ -111,44 +106,40 @@ get_Tpref <- function(sp_dat, temp_dat, region){
 
     #calculate median across area for Tpref, Tmin, Tquant
     #min depth Tpref
-    min_temp_med <- median(min_temp_rast)
+    min_temp_med <- median(min_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    min_temp_crs <- project(min_temp_med, "EPSG:4326")
     min_temp_crop <- crop(min_temp_crs, hull, mask = TRUE)
     min_global_avg <- terra::global(min_temp_crop, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_min = min_global_avg[1,1]
     
     #median depth Tpref
-    med_temp_med <- median(med_temp_rast)
+    med_temp_med <- median(med_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    med_temp_crs <- project(med_temp_med, "EPSG:4326")
     med_temp_crop <- crop(med_temp_crs, hull, mask = TRUE)
     med_global_avg <- terra::global(med_temp_crop, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_med = med_global_avg[1,1]
 
     #75% quantile depth Tpref
-    quant_temp_med <- median(quant_temp_rast)
+    quant_temp_med <- median(quant_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    quant_temp_crs <- project(quant_temp_med, "EPSG:4326")
     quant_temp_crop <- crop(quant_temp_crs, hull, mask = TRUE)
     quant_global_avg <- terra::global(quant_temp_crop, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_quant = quant_global_avg[1,1]
     
-  } else if(region == "nep" & enviro_layer == "bottom"){
+  } else if(region == "nep" && enviro_layer == "bottom"){
       
     #filter for date range
       target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
       nep_btemp_sub <- nep_btemp[[target_dates]]
     
     #calculate median across area for Tpref and update crs for cropping
-      med_btemp <- median(nep_btemp_sub)
-      med_btemp_crs <- project(med_btemp, "EPSG:4326")
+      med_btemp <- median(nep_btemp_sub, na.rm = TRUE)
       med_btemp_rot <- rotate(med_btemp_crs)
 
     #filter for species range
@@ -159,7 +150,7 @@ get_Tpref <- function(sp_dat, temp_dat, region){
     
       temp_dat$Tpref_med = global_avg[1,1]
 
-  } else if(region == "nep" & enviro_layer == "pelagic"){
+  } else if(region == "nep" && enviro_layer == "pelagic"){
       
     #filter for date range
       target_dates <- time(nep_temp) >= ym("1995-01") & time(nep_temp) <= ym("2019-12")
@@ -181,10 +172,9 @@ get_Tpref <- function(sp_dat, temp_dat, region){
 
     #calculate median across area for Tpref, Tmin, Tquant
     #min depth Tpref
-    min_temp_med <- median(min_temp_rast)
+    min_temp_med <- median(min_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    min_temp_crs <- project(min_temp_med, "EPSG:4326")
     min_temp_rot <- rotate(min_temp_crs)
     min_temp_crop <- crop(min_temp_rot, hull, mask = TRUE)
     min_global_avg <- terra::global(min_temp_crop, fun = "mean", na.rm = TRUE)
@@ -192,10 +182,9 @@ get_Tpref <- function(sp_dat, temp_dat, region){
     temp_dat$Tpref_min = min_global_avg[1,1]
     
     #median depth Tpref
-    med_temp_med <- median(med_temp_rast)
+    med_temp_med <- median(med_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    med_temp_crs <- project(med_temp_med, "EPSG:4326")
     med_temp_rot <- rotate(med_temp_crs)
     med_temp_crop <- crop(med_temp_rot, hull, mask = TRUE)
     med_global_avg <- terra::global(med_temp_crop, fun = "mean", na.rm = TRUE)
@@ -203,10 +192,9 @@ get_Tpref <- function(sp_dat, temp_dat, region){
     temp_dat$Tpref_med = med_global_avg[1,1]
 
     #75% quantile depth Tpref
-    quant_temp_med <- median(quant_temp_rast)
+    quant_temp_med <- median(quant_temp_rast, na.rm = TRUE)
 
     #Update CRS, crop, and take mean
-    quant_temp_crs <- project(quant_temp_med, "EPSG:4326")
     quant_temp_rot <- rotate(quant_temp_crs)
     quant_temp_crop <- crop(quant_temp_rot, hull, mask = TRUE)
     quant_global_avg <- terra::global(quant_temp_crop, fun = "mean", na.rm = TRUE)
@@ -238,6 +226,5 @@ all_tpref2 <- merge(sp_dat, all_tpref, all.x = TRUE)
 
 #save tpref data
 saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpref.rds"))
-sp_dat_tpref <- readRDS(here("data/agi/sp_dat_tpref.rds"))
 
 
