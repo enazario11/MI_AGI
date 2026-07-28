@@ -12,32 +12,31 @@ do_to_atm <- function(do, t, s, thresh = FALSE) {
   rast_format <- inherits(do, "SpatRaster")
   if (rast_format) {
     do_rast <- do
-    do <- terra::values(do)[, 1]
+    do <- terra::values(do)
     t_rast <- t
-    t <- terra::values(t)[, 1]
+    t <- terra::values(t)
     s_rast <- s
-    s <- terra::values(s)[, 1]
+    s <- terra::values(s)
   }
 
-  for(i in 1:length(do)){
+  po2_atm <-  rep(NA_real_, length(do))
+
+  for(i in 1:length(do)) {
     if(!is.na(do[i]) && !is.na(t[i]) && !is.na(s[i])){
 
       # seawater density to move from a per-kg to a per-volume basis
         rho <- marelac::sw_dens(S = s[i], t = t[i], P = 1.013253) # kg/m3
 
         # mol/kg -> mmol/m3 
-        do_mmol_m3 <- do * 1000 * rho 
+        do_mmol_m3 <- do[i] * 1000 * rho 
       
-    }
-  }
-
-  po2_atm <-  rep(NA_real_, length(do_mmol_m3))
-
-  for(i in 1:length(do_mmol_m3)){
-    if(!is.na(do[i]) && !is.na(t[i]) && !is.na(s[i])){
+        #solubility mmol/m3/bar to atm 
         a_o2_bar <- marelac::gas_solubility(S = s[i], t = t[i], species = "O2")
         a_o2_atm <- a_o2_bar / 0.9869
-        po2_atm[i] <- do_mmol_m3[i] / a_o2_atm
+      
+        #po2_atm
+        po2_atm[i] <- do_mmol_m3 / a_o2_atm
+      
     }
   }
 
@@ -45,6 +44,7 @@ do_to_atm <- function(do, t, s, thresh = FALSE) {
   if (rast_format) {
     po2_atm_rast <- do_rast
     terra::values(po2_atm_rast) <- po2_atm
+    units(po2_atm_rast) <- "atm"
     return(po2_atm_rast)
   }
 
