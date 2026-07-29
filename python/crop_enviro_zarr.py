@@ -1,7 +1,7 @@
 #libraries
 import xarray as xr
 import geopandas as gpd
-import rioxarray 
+import rioxarray as rxr
 import dask
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,7 +44,7 @@ temp_nwa = temp_nwa.rio.set_spatial_dims(x_dim="lon", y_dim="lat") #get spatial 
 
 temp_nwa_crop = temp_nwa.rio.clip(nwa_union.geometry, nwa_union.crs, drop=True) #crop to union hull
 
-temp_nwa_crop.name = "thetao" #rename data variable to o2
+temp_nwa_crop.name = "thetao" #rename data variable to thetao
 temp_nwa_crop_ds = temp_nwa_crop.to_dataset() #xarray to dataset
 
 #clears encoding specific to zarr
@@ -67,7 +67,7 @@ sal_nwa = sal_nwa.rio.set_spatial_dims(x_dim="lon", y_dim="lat") #get spatial di
 
 sal_nwa_crop = sal_nwa.rio.clip(nwa_union.geometry, nwa_union.crs, drop=True) #crop to union hull
 
-sal_nwa_crop.name = "so" #rename data variable to o2
+sal_nwa_crop.name = "so" #rename data variable to so
 sal_nwa_crop_ds = sal_nwa_crop.to_dataset() #xarray to dataset
 
 #clears encoding specific to zarr
@@ -130,7 +130,7 @@ box = temp_nep.sel(lon=slice(minx, maxx), lat=slice(miny, maxy))
 mask = regionmask.mask_geopandas(nep_union, box.lon, box.lat)
 temp_nep_crop = box.where(~np.isnan(mask), drop=True) 
 
-temp_nep_crop.name = "thetao" #rename data variable to o2
+temp_nep_crop.name = "thetao" #rename data variable to thetao
 temp_nep_crop_ds = temp_nep_crop.to_dataset() #xarray to dataset
 
 #clears encoding specific to zarr
@@ -159,7 +159,7 @@ box = sal_nep.sel(lon=slice(minx, maxx), lat=slice(miny, maxy))
 mask = regionmask.mask_geopandas(nep_union, box.lon, box.lat)
 sal_nep_crop = box.where(~np.isnan(mask), drop=True) 
 
-sal_nep_crop.name = "so" #rename data variable to o2
+sal_nep_crop.name = "so" #rename data variable to so
 sal_nep_crop_ds = sal_nep_crop.to_dataset() #xarray to dataset
 
 #clears encoding specific to zarr

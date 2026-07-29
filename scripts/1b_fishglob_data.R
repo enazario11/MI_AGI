@@ -56,7 +56,7 @@ for(i in 1:nrow(pel_dat)){
 
   pel_dat$med_depth[i] <- median(curr_glob$depth, na.rm = TRUE)
   pel_dat$min_depth[i] <- min(curr_glob$depth, na.rm = TRUE)
-  pel_dat$top_quant_depth[i] <- quantile(curr_glob$num, 0.75)
+  pel_dat$quant_depth[i] <- quantile(curr_glob$depth, 0.75, na.rm = TRUE)
 
 }
 

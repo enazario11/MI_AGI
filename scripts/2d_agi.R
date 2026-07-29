@@ -22,6 +22,39 @@ agi_coef <- read.csv(here("data/agi/agi_coef.csv"))
   #combine fishbase coefs and tpref/oxythresh values
 agi_dat <- agi_coef %>% left_join(agi_temp, by = "Common.name")
 
+  #exploratory analyses of tpref and oxythresh
+agi_viz <- agi_dat[!duplicated(agi_dat$Common.name), ]
+agi_tpref <- agi_viz %>% 
+  pivot_longer(
+    cols = c(Tpref_min, Tpref_med, Tpref_quant), 
+    names_to = "Tpref", 
+    values_to = "value"
+  )
+
+agi_tpref %>%
+  mutate(Tpref = fct_relevel(Tpref, "Tpref_min", "Tpref_med", "Tpref_quant")) %>%
+  ggplot(aes(Tpref, value)) + 
+    geom_point(aes(color = Tpref, shape = region), size = 3) + 
+    facet_wrap(~Common.name) +
+    theme_bw()+
+    scale_color_manual(values = c("#01448A", "#0B69A6", "#5F9ABA"))
+
+
+agi_oxythresh <- agi_viz %>% 
+  pivot_longer(
+    cols = c(thresh_min, thresh_med, thresh_quant), 
+    names_to = "oxythresh", 
+    values_to = "value"
+  )
+
+agi_oxythresh %>%
+  mutate(oxythresh = fct_relevel(oxythresh, "thresh_min", "thresh_med", "thresh_quant")) %>%
+  ggplot(aes(oxythresh, value)) + 
+    geom_point(aes(color = oxythresh, shape = region), size = 3) + 
+    facet_wrap(~Common.name) +
+    theme_bw()+
+    scale_color_manual(values = c("#01448A", "#0B69A6", "#5F9ABA"))
+
 #load species hulls
 sp_hull <- list.files("data/fish_hull", full.names = TRUE)
 
