@@ -27,20 +27,26 @@ nwa_temp <- rast(here("data/enviro/nwa/temp/processed/temp_nwa_crop.nc"))
 
 ### load NEP data #####
 #### bottom temperature #####
-nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+#nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
     #filter for date range
-      target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
-      nep_btemp_sub <- nep_btemp[[target_dates]]
+      #target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
+      #nep_btemp_sub <- nep_btemp[[target_dates]]
     
     #calculate median across area for Tpref and update crs for cropping
-      med_btemp <- median(nep_btemp_sub, na.rm = TRUE)
-      med_btemp_rot <- rotate(med_btemp)
-      writeCDF(med_btemp_rot, here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
+      #med_btemp <- median(nep_btemp_sub, na.rm = TRUE)
+      #med_btemp_rot <- rotate(med_btemp)
+      #writeCDF(med_btemp_rot, here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
+
+med_btemp_rot <- rast(here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
 
 #### all z temperature cropped to union hull #####
 nep_temp <- rast(here("data/enviro/nep/temp/processed/temp_nep_crop.nc"))
 
+    #filter for date range
+      target_dates <- time(nep_temp) >= ym("1995-01") & time(nep_temp) <= ym("2019-12")
+      nep_temp_sub <- nep_temp[[target_dates]]
+    
 ### fishglob survey data ######
 sp_dat1 <- read.csv(here("data/fishglob/glob_metdat.csv"))
 
@@ -147,11 +153,6 @@ get_Tpref <- function(sp_dat, region){
       temp_dat$Tpref_med = global_avg[1,1]
 
   } else if(region == "nep" && enviro_layer == "pelagic"){
-      
-    #filter for date range
-      target_dates <- time(nep_temp) >= ym("1995-01") & time(nep_temp) <= ym("2019-12")
-      nep_temp_sub <- nep_temp[[target_dates]]
-    
      # get right depth layers
       min_layer <- which.min(abs(depth(nep_temp_sub) - sp_dat$min_depth[i]))
       min_seq <- seq(from = min_layer, to = nlyr(nep_temp_sub), by = length(unique(depth(nep_temp_sub))))
@@ -167,33 +168,24 @@ get_Tpref <- function(sp_dat, region){
       quant_temp_rast <- nep_temp_sub[[quant_seq]]
 
     #calculate median across area for Tpref, Tmin, Tquant
-    #min depth Tpref
-    min_temp_med <- median(min_temp_rast, na.rm = TRUE)
-
-    #Update CRS, crop, and take mean
-    min_temp_rot <- rotate(min_temp_crs)
-    min_temp_crop <- crop(min_temp_rot, hull, mask = TRUE)
-    min_global_avg <- terra::global(min_temp_crop, fun = "mean", na.rm = TRUE)
+    #min depth Tpref - crop, take median, get mean across area
+    min_temp_crop <- crop(min_temp_rast, hull, mask = TRUE)
+    min_temp_med <- median(min_temp_crop, na.rm = TRUE)
+    min_global_avg <- terra::global(min_temp_med, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_min = min_global_avg[1,1]
     
-    #median depth Tpref
-    med_temp_med <- median(med_temp_rast, na.rm = TRUE)
-
-    #Update CRS, crop, and take mean
-    med_temp_rot <- rotate(med_temp_crs)
-    med_temp_crop <- crop(med_temp_rot, hull, mask = TRUE)
-    med_global_avg <- terra::global(med_temp_crop, fun = "mean", na.rm = TRUE)
+    #median depth Tpref - crop, take median, get mean across area
+    med_temp_crop <- crop(med_temp_rast, hull, mask = TRUE)
+    med_temp_med <- median(med_temp_crop, na.rm = TRUE)
+    med_global_avg <- terra::global(med_temp_med, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_med = med_global_avg[1,1]
 
-    #75% quantile depth Tpref
-    quant_temp_med <- median(quant_temp_rast, na.rm = TRUE)
-
-    #Update CRS, crop, and take mean
-    quant_temp_rot <- rotate(quant_temp_crs)
-    quant_temp_crop <- crop(quant_temp_rot, hull, mask = TRUE)
-    quant_global_avg <- terra::global(quant_temp_crop, fun = "mean", na.rm = TRUE)
+    #75% quantile depth Tpref - crop, take median, get mean across area
+    quant_temp_crop <- crop(quant_temp_rast, hull, mask = TRUE)
+    quant_temp_med <- median(quant_temp_crop, na.rm = TRUE)
+    quant_global_avg <- terra::global(quant_temp_med, fun = "mean", na.rm = TRUE)
   
     temp_dat$Tpref_quant = quant_global_avg[1,1]
 
