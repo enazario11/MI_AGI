@@ -6,7 +6,7 @@ library(sf)
 source(here("functions/oxy_demand_functions.R"))
 
 ####
-#CONSIDER CONVERTING DO LAYERS TO ATM BEFORE RUNNING IF HAVE TO RUN AGAIN 
+#CONSIDER CONVERTING FULL DO RASTERS TO ATM BEFORE RUNNING IF HAVE TO RUN AGAIN 
 ####
 
 ### load NWA data #####
@@ -258,7 +258,7 @@ nep_oxythresh <- get_OxyThresh(sp_dat = sp_dat_nep, region = "nep")
 saveRDS(nep_oxythresh, here("data/agi/nep_oxythresh.rds"))
 
 all_oxythresh <- rbind(nwa_oxythresh, nep_oxythresh) %>% select(c(Common.name, thresh_med, thresh_min, thresh_quant))
-all_oxythresh2 <- merge(sp_dat, all_oxythresh, all.x = TRUE)
+all_oxythresh2 <- merge(sp_dat1, all_oxythresh, all.x = TRUE)
 
 #save tpref data
 saveRDS(all_oxythresh2, file = here("data/agi/sp_dat_oxythresh.rds"))
