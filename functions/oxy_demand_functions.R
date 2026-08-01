@@ -36,9 +36,13 @@ do_to_atm <- function(do, t, s, thresh = FALSE) {
       
         #po2_atm
         po2_atm[i] <- do_mmol_m3 / a_o2_atm
-      
+
+        # Print progress
+          setTxtProgressBar(pb, i)
     }
   }
+
+  close(pb)
 
   # Handle the return value if raster
   if (rast_format) {

@@ -210,7 +210,7 @@ nep_tpref <- get_Tpref(sp_dat = sp_dat_nep, region = "nep")
 saveRDS(nep_tpref, here("data/agi/nep_tpref.rds"))
 
 all_tpref <- rbind(nwa_tpref, nep_tpref) %>% select(c(Common.name, Tpref_med, Tpref_min, Tpref_quant))
-all_tpref2 <- merge(sp_dat, all_tpref, all.x = TRUE)
+all_tpref2 <- merge(sp_dat1, all_tpref, all.x = TRUE)
 
 #save tpref data
 saveRDS(all_tpref2, file = here("data/agi/sp_dat_tpref.rds"))
