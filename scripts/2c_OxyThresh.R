@@ -3,11 +3,7 @@ library(tidyverse)
 library(here)
 library(terra)
 library(sf)
-source(here("functions/oxy_demand_functions.R"))
-
-####
-#CONSIDER CONVERTING FULL DO RASTERS TO ATM BEFORE RUNNING IF HAVE TO RUN AGAIN 
-####
+source(here("functions/oxy_demand_functions_test.R"))
 
 ### load NWA data #####
 #### bottom o2 -- no crop #####

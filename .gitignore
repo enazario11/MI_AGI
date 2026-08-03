@@ -7,7 +7,7 @@
 .DS_Store
 .quarto
 
-/data
+data/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
