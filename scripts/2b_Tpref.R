@@ -38,7 +38,7 @@ nwa_temp <- rast(here("data/enviro/nwa/temp/processed/temp_nwa_crop.nc"))
       #med_btemp_rot <- rotate(med_btemp)
       #writeCDF(med_btemp_rot, here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
 
-med_btemp_rot <- rast(here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
+med_btemp_rot <- rast(here("data/enviro/nep/temp/processed/btemp_nep_median_rot.nc"))
 
 #### all z temperature cropped to union hull #####
 nep_temp <- rast(here("data/enviro/nep/temp/processed/temp_nep_crop.nc"))

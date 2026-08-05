@@ -5,8 +5,6 @@ library(terra)
 library(sf)
 library(rnaturalearth)
 library(tidyterra)
-library(doParallel)
-library(foreach)
 library(patchwork)
 source(here("functions/oxy_demand_functions_test.R"))
 
@@ -101,9 +99,9 @@ AGI <- function(sp_name, weight, sex, season, enviro){ #consider adding enviro d
 
   if(enviro == "bottom"){
     #load enviro data
-    bo2_atm <- rast(here(past0("data/enviro/", agi_1row$region ,"/do/atm/", agi_1row$region, "_bo2_atm.nc")))
+    bo2_atm <- rast(here(paste0("data/enviro/", agi_1row$region ,"/do/atm/", agi_1row$region, "_bo2_atm.nc")))
 
-    bto_folder <- list.files(here(past0("data/enviro/", agi_1row$region, "/temp/raw/")), full.names = TRUE, pattern = "tob")
+    bto_folder <- list.files(here(paste0("data/enviro/", agi_1row$region, "/temp/processed/")), full.names = TRUE, pattern = "tob")
     bto <- rast(bto_folder[1])
 
     #get species hull
@@ -176,28 +174,29 @@ AGI <- function(sp_name, weight, sex, season, enviro){ #consider adding enviro d
 land <- ne_countries(scale = "large", returnclass = "sf")
 
   #agi raster bottom species
-agi_bot <- AGI(sp_name = "Atlantic cod", weight = 8000, enviro = "bottom")
+agi_bot <- AGI(sp_name = "Rex sole", weight = 500, enviro = "bottom")
 
 ggplot() +
   geom_spatraster(data = agi_bot) +
   geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
-  coord_sf(xlim = as.vector(ext(agi_test))[1:2] + c(-2, 2),
-           ylim = as.vector(ext(agi_test))[3:4] + c(-2, 2),
+  coord_sf(xlim = as.vector(ext(agi_bot))[1:2] + c(-2, 2),
+           ylim = as.vector(ext(agi_bot))[3:4] + c(-2, 2),
            expand = FALSE) +
-  scale_fill_viridis_c(na.value = "transparent", name = "AGI", limits = c(0.5,2.5)) +
+  scale_fill_viridis_c(na.value = "transparent", name = "AGI") +
   labs(x = NULL, y = NULL) +
   theme_bw()
   
   #agi raster pelagic species
-agi_pel <- AGI(sp_name = "Atlantic herring", weight = 300, enviro = "pelagic")
+agi_pel <- AGI(sp_name = "Pacific sardine", weight = 100, enviro = "pelagic")
 
 ggplot() +
   geom_spatraster(data = agi_pel) +
   geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
-  coord_sf(xlim = as.vector(ext(agi_test))[1:2] + c(-2, 2),
-           ylim = as.vector(ext(agi_test))[3:4] + c(-2, 2),
+  coord_sf(xlim = as.vector(ext(agi_pel))[1:2] + c(-2, 2),
+           ylim = as.vector(ext(agi_pel))[3:4] + c(-2, 2),
            expand = FALSE) +
-  scale_fill_viridis_c(na.value = "transparent", name = "AGI", limits = c(0.5,2.5)) +
+  scale_fill_viridis_c(na.value = "transparent", name = "AGI") +
   labs(x = NULL, y = NULL) +
-  theme_bw() + 
-  labs(title = names(agi_pel))
+  theme_minimal() + 
+  facet_wrap(~lyr) +
+  theme(strip.text = element_text(size = 16))

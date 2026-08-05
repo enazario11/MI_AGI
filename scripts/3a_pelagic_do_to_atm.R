@@ -5,8 +5,6 @@ library(terra)
 library(sf)
 library(rnaturalearth)
 library(tidyterra)
-library(doParallel)
-library(foreach)
 library(patchwork)
 source(here("functions/oxy_demand_functions_test.R"))
 
@@ -14,11 +12,7 @@ source(here("functions/oxy_demand_functions_test.R"))
 #extract data hulls
 write_hulls <- function(sp_dat, oxy_path, temp_path, sal_path){
 
-  #set up parallel
-  cluster <- makeCluster(5)
-  registerDoParallel(cluster) 
-
-  foreach(i = 1:nrow(sp_dat), .packages = c("tidyverse", "here", "terra"), .export = c("dat_glob", "sp_dat")) %dopar% { 
+  for(i in 2:nrow(sp_dat)) { 
      oxy = rast(here(oxy_path))
      temp = rast(here(temp_path))
      sal = rast(here(sal_path))
@@ -43,13 +37,13 @@ write_hulls <- function(sp_dat, oxy_path, temp_path, sal_path){
         hull <- convHull(pts)
       
         # get right depth layers
-        min_layer <- which.min(abs(depth(oxy) - sp_dat$min_depth[i]))
+        min_layer <- which.min(abs(depth(oxy) - temp_dat$min_depth))
         min_seq <- seq(from = min_layer, to = nlyr(oxy), by = length(unique(depth(oxy))))
 
-        med_layer <- which.min(abs(depth(oxy) - sp_dat$med_depth[i]))
+        med_layer <- which.min(abs(depth(oxy) - temp_dat$med_depth))
         med_seq <- seq(from = med_layer, to = nlyr(oxy), by = length(unique(depth(oxy))))
       
-        quant_layer <- which.min(abs(depth(oxy) - sp_dat$quant_depth[i]))
+        quant_layer <- which.min(abs(depth(oxy) - temp_dat$quant_depth))
         quant_seq <- seq(from = quant_layer, to = nlyr(oxy), by = length(unique(depth(oxy))))
       
         min_o2_rast <- oxy[[min_seq]]
@@ -65,8 +59,6 @@ write_hulls <- function(sp_dat, oxy_path, temp_path, sal_path){
         quant_sal_rast <- sal[[quant_seq]]
       
         #crop and convert do to atm
-       source(here("functions/oxy_demand_functions_test.R"))
-
         min_o2_atm <- rast_do_to_atm(do = min_o2_rast, t = min_temp_rast, s = min_sal_rast)
         med_o2_atm <- rast_do_to_atm(do = med_o2_rast, t = med_temp_rast, s = med_sal_rast)
         quant_o2_atm <- rast_do_to_atm(do = quant_o2_rast, t = quant_temp_rast, s = quant_sal_rast)
@@ -99,7 +91,7 @@ write_hulls <- function(sp_dat, oxy_path, temp_path, sal_path){
         writeCDF(quant_temp_crop, paste0("data/enviro/", temp_dat$region ,"/temp/processed/hull_crop/", curr_sp, "/quant_depth/quant_depth_temp.nc"))
     
     } #end of hull crop
-  } #end of parallel
+  } 
 } #end of function
 
 ### fishglob survey data #####
