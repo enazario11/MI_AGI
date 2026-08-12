@@ -1,0 +1,47 @@
+---
+title: "MI - AGI: exploratory figures"
+author: "Emily Nazario"
+date: "`r Sys.Date()`"
+format:
+ html: 
+  embed-resources: true
+editor: visual
+toc: TRUE
+toc-title: "On this page"
+theme: yeti
+fontcolor: "#134f5c"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+#| label: libraries
+
+library(tidyverse)
+library(tidyquant)
+library(terra)
+library(sf)
+library(here)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(wesanderson)
+library(patchwork)
+set.seed(0904)
+
+land <- ne_countries(scale = "large", returnclass = "sf")
+
+theme_custom <- function(){
+ theme_tq() + 
+ theme(axis.text = element_text(size = 14, color = "black"), 
+       axis.title = element_text(size = 16, color = "black"), 
+       legend.text = element_text(size = 14, color = "black"), 
+       legend.title = element_text(size = 16, color = "black"), 
+       plot.title = element_text(size = 16, color = "black"),
+       strip.text = element_text(size = 16), 
+       legend.position = "right")
+}
+
+```

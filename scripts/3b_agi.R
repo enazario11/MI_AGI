@@ -299,7 +299,7 @@ ggplot() +
         legend.position = "right")
   
   #agi raster pelagic species
-agi_pel <- AGI(sp_name = "Atlantic herring", enviro = "pelagic")
+agi_pel <- AGI(sp_name = "Northern anchovy", enviro = "pelagic")
 agi_crit_pel <- get_crit(agi_pel, enviro = "pelagic")
 
 ggplot() +
@@ -312,7 +312,7 @@ ggplot() +
   scale_fill_whitebox_c(palette = "muted", direction = -1) +
   labs(x = NULL, y = NULL, fill = "AGI") +
   tidyquant::theme_tq() + 
-  facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 35)) +
+  facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
   theme(strip.text = element_text(size = 14), 
         legend.position = "right")
   
