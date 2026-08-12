@@ -179,8 +179,9 @@ AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding e
             LwB = double(length(unique(agi_dat2$Location))), 
             Linf = double(length(unique(agi_dat2$Location)))
           )
+               
+        agi_all_loc <- rast() #empty raster for all loc x depth rasters
       
-      #START HERE
         for(i in 1:length(unique(agi_dat2$Location))){
           curr_loc <- unique(agi_dat2$Location)[i] 
           loc_dat <- agi_dat2 %>% filter(Location == curr_loc)
@@ -195,44 +196,45 @@ AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding e
             region_coef$LwA[i] <- LwA
             region_coef$LwB[i] <- LwB
           }
-        }
 
-        #agi min depth
-          #calculate agi
-          min_o2_demand <- OxyDemand(Tpref = agi_dat2$Tpref_min, PO2_thresh = agi_dat2$thresh_min, T_C = min_temp, 
-                                  W = weight, K = NULL, Linf = agi_dat2$Linf, LwA = agi_dat2$LwA, LwB = agi_dat2$LwB)
+          #agi min depth
+          min_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_min[i], PO2_thresh = region_coef$thresh_min[i], T_C = min_temp, 
+                                  W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
           agi_min_depth <- min_o2_atm/min_o2_demand
 
           #take median across time
           agi_min <- median(agi_min_depth, na.rm = TRUE)
-          names(agi_min) <- "agi_min_depth"
+          names(agi_min) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_min_depth")
 
         #agi med depth
           #calculate agi
-          med_o2_demand <- OxyDemand(Tpref = agi_dat2$Tpref_med, PO2_thresh = agi_dat2$thresh_med, T_C = med_temp, 
-                                  W = weight, K = NULL, Linf = agi_dat2$Linf, LwA = agi_dat2$LwA, LwB = agi_dat2$LwB)
+          med_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_med[i], PO2_thresh = region_coef$thresh_med[i], T_C = med_temp, 
+                                  W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
           agi_med_depth <- med_o2_atm/med_o2_demand
 
           #take median across time
           agi_med <- median(agi_med_depth, na.rm = TRUE)
-          names(agi_med) <- "agi_med_depth"
+          names(agi_med) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_med_depth")
 
         #agi 75% quantile depth
           #calculate agi
-          quant_o2_demand <- OxyDemand(Tpref = agi_dat2$Tpref_quant, PO2_thresh = agi_dat2$thresh_quant, T_C = quant_temp, 
-                                  W = weight, K = NULL, Linf = agi_dat2$Linf, LwA = agi_dat2$LwA, LwB = agi_dat2$LwB)
+          quant_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_quant[i], PO2_thresh = region_coef$thresh_quant[i], T_C = quant_temp, 
+                                  W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
           agi_quant_depth <- quant_o2_atm/quant_o2_demand
 
           #take median across time
           agi_quant <- median(agi_quant_depth, na.rm = TRUE)
-          names(agi_quant) <- "agi_quant_depth"
+          names(agi_quant) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_quant_depth")
 
         #combine agi
         agi_all <- c(agi_min, agi_med, agi_quant)
-        return(agi_all)
+        agi_all_loc <- c(agi_all_loc, agi_all)
+        } #end of loc loop
+       
+        return(agi_all_loc)
       
     } #end of pelagic
   
@@ -263,22 +265,14 @@ get_crit <- function(agi, enviro){
         #agi crit per layer
           agi_crit_pel_values <- global(agi, fun = quantile, probs = c(0.10), na.rm = TRUE) #calc crit per depth layer
 
-          agi_crit_min <- raster::clamp(agi[[1]], upper = agi_crii_values[1,], values = FALSE)
-          agi_crit_min <- as.polygons(agi_crit_min) %>% mutate(lyr = "agi_min_depth")
+          agi_crit <- raster::clamp(agi[[i]], upper = agi_crit_pel_values[i, 1], values = FALSE)
+          agi_crit <- as.polygons(agi_crit) %>% mutate(lyr = names(agi_crit))
 
-
-          agi_crit_med <- raster::clamp(agi[[2]], upper = agi_crii_values[2,], values = FALSE)
-          agi_crit_med <- as.polygons(agi_crit_med) %>% mutate(lyr = "agi_med_depth")
-
-
-          agi_crit_quant <- raster::clamp(agi[[3]], upper = agi_crii_values[3,], values = FALSE)
-          agi_crit_quant <- as.polygons(agi_crit_quant) %>% mutate(lyr = "agi_quant_depth")
-
-
-          crit_combo <- rbind(agi_crit_min, agi_crit_med, agi_crit_quant)
-          return(crit_combo)
+          crit_pel_combo <- rbind(crit_pel_combo, agi_crit)
 
     } #end crit calc
+
+  return(crit_pel_combo)
   } #end pelagic
 } #end function
 
@@ -287,40 +281,38 @@ get_crit <- function(agi, enviro){
 land <- ne_countries(scale = "large", returnclass = "sf")
 
   #agi raster bottom species
-agi_bot <- AGI(sp_name = "Acadian redfish", enviro = "bottom")
+agi_bot <- AGI(sp_name = "Atlantic cod", enviro = "bottom")
 agi_crit_bot <- get_crit(agi = agi_bot, enviro = "bottom")
 
 ggplot() +
   geom_spatraster(data = agi_bot) +
   geom_spatvector(data = agi_crit_bot, color = "black", fill = NA, linewidth = 1) +
-  #geom_spatvector(data = agi_one_bot, color = "grey15", fill = NA, linewidth = 1) +
   geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
   coord_sf(xlim = as.vector(ext(agi_bot))[1:2] + c(-2, 2),
            ylim = as.vector(ext(agi_bot))[3:4] + c(-2, 2),
            expand = FALSE) +
   scale_fill_whitebox_c(palette = "muted", direction = -1) +
-  facet_wrap(~lyr) +
-  labs(x = NULL, y = NULL) +
+  facet_wrap(~lyr, labeller = label_wrap_gen(width = 45)) +
+  labs(x = NULL, y = NULL, fill = "AGI") +
   tidyquant::theme_tq() + 
-  theme(strip.text = element_text(size = 14))
+  theme(strip.text = element_text(size = 16), 
+        legend.position = "right")
   
   #agi raster pelagic species
-agi_pel <- AGI(sp_name = "Pacific sardine", enviro = "pelagic")
-
-agi_crit_pel <- get_crit_pel(agi_pel)
-agi_one_pel <- get_one_pel(agi_pel)
+agi_pel <- AGI(sp_name = "Atlantic herring", enviro = "pelagic")
+agi_crit_pel <- get_crit(agi_pel, enviro = "pelagic")
 
 ggplot() +
   geom_spatraster(data = agi_pel) +
   geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
-  geom_spatvector(data = agi_one_pel, color = "grey15", fill = NA, linewidth = 1) +
   geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
   coord_sf(xlim = as.vector(ext(agi_pel))[1:2] + c(-2, 2),
            ylim = as.vector(ext(agi_pel))[3:4] + c(-2, 2),
            expand = FALSE) +
   scale_fill_whitebox_c(palette = "muted", direction = -1) +
   labs(x = NULL, y = NULL, fill = "AGI") +
-  theme_minimal() + 
-  facet_wrap(~lyr) +
-  theme(strip.text = element_text(size = 16))
+  tidyquant::theme_tq() + 
+  facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 35)) +
+  theme(strip.text = element_text(size = 14), 
+        legend.position = "right")
   
