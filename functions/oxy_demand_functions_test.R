@@ -34,7 +34,7 @@ rast_do_to_atm <- function(do, t, s, filename = ""){
 }
 
 #caclulated metabolic demand 
-OxyDemand<- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8000, j1 = 4500, 
+OxyDemand<- function(Tpref, PO2_thresh, T_C, W = NULL, d = 0.700, K, j2 = 8000, j1 = 4500, 
                       Linf, LwA, LwB){
 
   # removing K/(1-d) because it cancels out in numerator and denominator
@@ -44,6 +44,7 @@ OxyDemand<- function(Tpref, PO2_thresh, T_C, W, d = 0.700, K, j2 = 8000, j1 = 45
   
   #Convert length to weight using scaling relationship
   Winf <- LwA * Linf**LwB
+  W <- Winf * (1/3) #Moree and Clarke both assume W is 1/3 Winf. See moree ms and Clarke email.
 
   O2_demand <- ((W**(1 - d)) * exp(-j2/T_K) * PO2_thresh * exp(-j1/Tpref_K)) / 
     ((Winf**(1 - d)) * exp(-j1/T_K) * exp(-j2/Tpref_K))
