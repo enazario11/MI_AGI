@@ -174,7 +174,7 @@ AGI <- function(sp_name, weight, sex, season, enviro){ #consider adding enviro d
 land <- ne_countries(scale = "large", returnclass = "sf")
 
   #agi raster bottom species
-agi_bot <- AGI(sp_name = "Rex sole", weight = 500, enviro = "bottom")
+agi_bot <- AGI(sp_name = "Black sea bass", weight = 400, enviro = "bottom")
 
 ggplot() +
   geom_spatraster(data = agi_bot) +
