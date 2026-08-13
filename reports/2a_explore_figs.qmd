@@ -31,6 +31,7 @@ library(patchwork)
 library(glmmTMB)
 set.seed(0904)
 source(here("functions/agi_calc.R"))
+source(here("functions/mi_calc.R"))
 
 #land mask
 land <- ne_countries(scale = "large", returnclass = "sf")
@@ -141,8 +142,8 @@ ggplot() +
 #| label: agi_pel
 #| echo: false
 #| out-width: "100%"
-#| fig-width: 12
-#| fig-height: 9
+#| fig-width: 15
+#| fig-height: 12
 #| results: hide
 
 #anchovy
@@ -210,8 +211,10 @@ ggplot() +
 #| label: mi agi cod
 #| echo: false
 #| out-width: 100%
-#| results: hide
 #| layout-ncol: 2
+#| results: hide
+#| fig-width: 8
+#| fig-height: 8
 
 agi_cod <- AGI(sp_name = "Atlantic cod", enviro = "bottom")
 agi_crit_cod <- get_crit(agi_cod, "bottom")
@@ -245,6 +248,15 @@ ggplot() +
   facet_wrap(~factor(lyr, levels = names(mi_cod)), labeller = label_wrap_gen(width = 25)) +
   theme_custom()
 
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| label: cod mod
+#| echo: false
+#| out-width: 100%
+
 #run glm to see rship between indices
 agi_cod_df <- as.data.frame(agi_cod, xy = TRUE)
 colnames(agi_cod_df) <- c("lon", "lat", "agi")
@@ -267,7 +279,6 @@ ggplot() +
     geom_point(aes(x = values(mi_cod), y = values(agi_cod)), color = "cornflowerblue", size = 2, alpha = 0.8) + 
     geom_line(data = pred_df_cod, aes(x = mi, y = pred_agi), color = "black", linewidth = 1.3) + 
     theme_custom()
-
 ```
 
 ## Black sea bass
@@ -278,9 +289,10 @@ ggplot() +
 #| label: mi agi bass
 #| echo: false
 #| out-width: 100%
-#| results: hide
 #| layout-ncol: 2
-
+#| results: hide
+#| fig-width: 8
+#| fig-height: 8
 
 agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom")
 agi_crit_bas <- get_crit(agi_bas, enviro = "bottom")
@@ -314,6 +326,14 @@ ggplot() +
   facet_wrap(~factor(lyr, levels = names(mi_bas)), labeller = label_wrap_gen(width = 25)) +
   theme_custom()
 
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| label: bass mod
+#| echo: false
+#| out-width: 100%
 
 #run glm to see rship between indices
 agi_bas_df <- as.data.frame(agi_bas, xy = TRUE)
@@ -337,5 +357,6 @@ ggplot() +
     geom_point(aes(x = values(mi_bas), y = values(agi_bas)), color = "cornflowerblue", size = 2, alpha = 0.8) + 
     geom_line(data = pred_df_bas, aes(x = mi, y = pred_agi), color = "black", linewidth = 1.3) + 
     theme_custom()
+
 ```
 :::
