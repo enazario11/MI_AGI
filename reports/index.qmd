@@ -8,3 +8,5 @@ editor: visual
 [See here](sim_compare.html) for the simulated environmental data visualizations.
 
 [See here](sim_compare_mbar.html) for the same comparisons but following the AGI equation from Clarke et al. 2021 (in mbar).
+
+[See here](2a_explore_figs.html) for AGI exploratory plots

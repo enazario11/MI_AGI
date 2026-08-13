@@ -400,7 +400,7 @@ agi_tile <- ggplot(enviro_cod, aes(x = as.factor(temp_whole), y = as.factor(DO_w
   ylab("Dissolved oxygen (kPa)") + 
   xlab("Temperature (C)") + 
   theme_custom()
-
+M
 ggpubr::ggarrange(mi_tile, agi_tile)
 
 ```

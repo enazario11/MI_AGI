@@ -211,7 +211,6 @@ ggplot() +
 #| echo: false
 #| out-width: 100%
 #| results: hide
-#| layout-ncol: 2
 
 agi_cod <- AGI(sp_name = "Atlantic cod", enviro = "bottom")
 agi_crit_cod <- get_crit(agi_cod, "bottom")
@@ -279,8 +278,6 @@ ggplot() +
 #| echo: false
 #| out-width: 100%
 #| results: hide
-#| layout-ncol: 2
-
 
 agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom")
 agi_crit_bas <- get_crit(agi_bas, enviro = "bottom")

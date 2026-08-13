@@ -12,3 +12,5 @@ data/
 .pixi/*
 !.pixi/config.toml
 .pixi/*
+/.quarto/
+**/*.quarto_ipynb

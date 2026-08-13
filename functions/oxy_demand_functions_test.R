@@ -52,11 +52,11 @@ OxyDemand<- function(Tpref, PO2_thresh, T_C, W = NULL, d = 0.700, K, j2 = 8000, 
   O2_demand
 } 
 
-MI_calc <- function(A0, Bn, DO_kPa, E0, kB, T_C){
+MI_calc <- function(A0, Bn = 0.01, DO, E0, kB = 0.000086173324, T_C){
 
   T_K = T_C  + 273.15
   
-  DO_supply = A0*Bn*DO_kPa
+  DO_supply = A0*Bn*DO
   DO_demand = exp(-E0/(kB*T_K))
   
   MI = DO_supply/DO_demand
