@@ -360,3 +360,63 @@ ggplot() +
 
 ```
 :::
+
+# AGI time series
+
+Ran example plot for sea bass as a proof of concept. Can add other species with notable range shifts.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: agi crit time
+#| echo: false
+#| out-width: 100%
+
+agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom", take_median = FALSE)
+agi_crit_bas <- quantile(values(agi_bas), 0.10, na.rm = TRUE)
+
+#make df of % area < AGIcrit over time
+crit_df_bas <- data.frame(date = date(nlyr(agi_bas)),  
+                          area_domain = numeric(nlyr(agi_bas)), 
+                          area_crit = numeric(nlyr(agi_bas)), 
+                          perc_crit = numeric(nlyr(agi_bas)))
+
+for(i in 1:nlyr(agi_bas)){
+  curr_lyr <- agi_bas[[i]]
+
+  #get areas
+  area_domain <- expanse(curr_lyr, unit = "km")
+  agi_crit_rast <- raster::clamp(curr_lyr, upper = agi_crit_bas, values = FALSE)
+  area_crit <- expanse(agi_crit_rast, unit = "km")
+  perc_crit <- area_crit/area_domain
+
+  #fill in df
+  crit_df_bas$date[i] = time(curr_lyr)[1]
+  crit_df_bas$area_domain[i] <- area_domain[1,2]
+  crit_df_bas$area_crit[i] <- area_crit[1,2]
+  crit_df_bas$perc_crit[i] <- perc_crit[1,2]
+}
+
+get_season <- function(date){
+  curr_month <- month(date)
+  case_when(
+    curr_month %in% c(12, 1, 2) ~ "Winter",
+    curr_month %in% c(3, 4, 5)  ~ "Spring",
+    curr_month %in% c(6, 7, 8)  ~ "Summer",
+    curr_month %in% c(9, 10, 11) ~ "Fall"
+  )
+}
+
+crit_df_bas <- crit_df_bas %>%
+    mutate(season = get_season(date), 
+           season = factor(season, levels = c("Spring", "Summer", "Fall", "Winter")))
+
+ggplot(crit_df_bas, aes(date, perc_crit*100)) + 
+    geom_line(linewidth = 1.3, color = "grey60")+
+    geom_point(size = 4, aes(color = season))+
+    ylab("Percent area below AGIcrit (%)")+
+    xlab("")+
+    scale_color_manual(values = c("#2C7329", "goldenrod", "#C07A3F", "#5F9ACE"))+
+    theme_custom()
+
+```

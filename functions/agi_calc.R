@@ -12,7 +12,7 @@ source(here("functions/oxy_demand_functions_test.R"))
 sp_hull <- list.files("data/fish_hull", full.names = TRUE)
 
 #calculate map of AGI 
-AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding enviro dat paths as arguments
+AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider adding enviro dat paths as arguments
   
   #isolate to species of interest
   agi_dat2 <- agi_dat %>% filter(Common.name == sp_name)
@@ -21,7 +21,7 @@ AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding e
         #load enviro data
         bo2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/", agi_dat2$region, "_bo2_atm.nc")))
 
-        bto_folder <- list.files(here(paste0("data/enviro/", agi_dat2$region, "/temp/processed/")), full.names = TRUE, pattern = "tob")
+        bto_folder <- list.files(here(paste0("data/enviro/", agi_dat2$region, "/temp/raw/")), full.names = TRUE, pattern = "tob")
         bto <- rast(bto_folder[1])
 
         #get species hull
@@ -68,10 +68,16 @@ AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding e
           agi <- bo2_crop/oxy_demand
 
           #take median across time
-          agi_med <- median(agi, na.rm = TRUE)
-          names(agi_med) <- paste(region_coef$region[i], "-", region_coef$species[i])
-          
-          agi_all <- c(agi_all, agi_med)
+          if(take_median == TRUE){
+              agi_med <- median(agi, na.rm = TRUE)
+              names(agi_med) <- paste(region_coef$region[i], "-", region_coef$species[i])
+              
+              agi_all <- c(agi_all, agi_med)
+          } else if(take_median == FALSE){ #or don't
+            names(agi) <- paste(region_coef$region[i], "-", region_coef$species[i], 1:nlyr(agi))
+            agi_all <- c(agi_all, agi)
+          }
+
         }
   
       return(agi_all)
@@ -118,48 +124,54 @@ AGI <- function(sp_name, weight = NULL, sex, season, enviro){ #consider adding e
             region_coef$LwB[i] <- LwB
           }
 
-          #agi min depth
+       #agi min depth
           min_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_min[i], PO2_thresh = region_coef$thresh_min[i], T_C = min_temp, 
                                   W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
-          agi_min_depth <- min_o2_atm/min_o2_demand
+          agi_min_depth <- min_o2_atm/min_o2_demand          
 
-          #take median across time
-          agi_min <- median(agi_min_depth, na.rm = TRUE)
-          names(agi_min) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_min_depth")
-
-        #agi med depth
+       #agi med depth
           #calculate agi
           med_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_med[i], PO2_thresh = region_coef$thresh_med[i], T_C = med_temp, 
                                   W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
           agi_med_depth <- med_o2_atm/med_o2_demand
 
-          #take median across time
-          agi_med <- median(agi_med_depth, na.rm = TRUE)
-          names(agi_med) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_med_depth")
-
         #agi 75% quantile depth
           #calculate agi
           quant_o2_demand <- OxyDemand(Tpref = region_coef$Tpref_quant[i], PO2_thresh = region_coef$thresh_quant[i], T_C = quant_temp, 
                                   W = weight, K = NULL, Linf = region_coef$Linf[i], LwA = region_coef$LwA[i], LwB = region_coef$LwB[i])
           
-          agi_quant_depth <- quant_o2_atm/quant_o2_demand
+          agi_quant_depth <- quant_o2_atm/quant_o2_demand         
+          
+        #take median across time
+        if(take_median == TRUE){
+          agi_min <- median(agi_min_depth, na.rm = TRUE)
+          names(agi_min) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_min_depth")
+          
+          agi_med <- median(agi_med_depth, na.rm = TRUE)
+          names(agi_med) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_med_depth")
 
-          #take median across time
           agi_quant <- median(agi_quant_depth, na.rm = TRUE)
           names(agi_quant) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_quant_depth")
+            
+          #combine agi
+          agi_all <- c(agi_min, agi_med, agi_quant)
+          agi_all_loc <- c(agi_all_loc, agi_all)
+          
+        } else if(take_median == FALSE){ #or don't
+          names(agi_min_depth) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_min_depth", 1:nlyr(agi_min_depth))
+          names(agi_med_depth) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_med_depth", 1:nlyr(agi_med_depth))
+          names(agi_quant_depth) <- paste(region_coef$region[i], "-", region_coef$species[i], "-", "agi_quant_depth", 1:nlyr(agi_quant_depth))
 
-        #combine agi
-        agi_all <- c(agi_min, agi_med, agi_quant)
-        agi_all_loc <- c(agi_all_loc, agi_all)
-        } #end of loc loop
-       
-        return(agi_all_loc)
-      
-    } #end of pelagic
-  
-} #end of function
+          #combine agi
+          agi_all <- c(agi_min_depth, agi_med_depth, agi_quant_depth)
+          agi_all_loc <- c(agi_all_loc, agi_all)
+        }
+      } #end of loc loop
+      return(agi_all_loc)
+    } #end of pelagic    
+  } #end of function
 
 #calc AGI crit
 get_crit <- function(agi, enviro){

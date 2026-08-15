@@ -7,15 +7,21 @@ source(here("functions/oxy_demand_functions_test.R"))
 
 ### load NWA data #####
 #### bottom o2 -- no crop #####
-#nwa_bo2_atm <- rast(here("data/enviro/nwa/do/atm/nwa_bo2_atm.nc"))
+# nwa_bo2 <- rast(here("data/enviro/nwa/do/raw/btm_o2.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
+# nwa_sob <- rast(here("data/enviro/nwa/salinity/raw/sob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
+# nwa_tob <- rast(here("data/enviro/nwa/temp/raw/tob.nwa.full.hcast.monthly.regrid.r20250715.199301-202312.nc"))
+# nwa_bo2_atm <- rast_do_to_atm(do = nwa_bo2, s = nwa_sob, t = nwa_tob)
 
-    #filter for date range
-      #target_dates <- time(nwa_bo2_atm) >= ym("1995-01") & time(nwa_bo2_atm) <= ym("2019-12")
-      #nwa_bo2_sub <- nwa_bo2_atm[[target_dates]]
+# writeCDF(nwa_bo2_atm, here("data/enviro/nwa/do/atm/nwa_bo2_atm.nc"), overwrite = TRUE)
+# nwa_bo2_atm <- rast(here("data/enviro/nwa/do/atm/nwa_bo2_atm.nc"))
 
-    #calculate median across area for Tpref and update crs for cropping
-      #med_bo2 <- median(nwa_bo2_sub, na.rm = TRUE)
-      #writeCDF(med_bo2, here("data/enviro/nwa/do/processed/do_nwa_med.nc"))
+#     #filter for date range
+#       target_dates <- time(nwa_bo2_atm) >= ym("1995-01") & time(nwa_bo2_atm) <= ym("2019-12")
+#       nwa_bo2_sub <- nwa_bo2_atm[[target_dates]]
+
+#    #calculate median across area for Tpref and update crs for cropping
+#       med_bo2 <- median(nwa_bo2_sub, na.rm = TRUE)
+#       writeCDF(med_bo2, here("data/enviro/nwa/do/processed/do_nwa_med.nc"), overwrite = TRUE)
 
 med_bo2 <- rast(here("data/enviro/nwa/do/processed/do_nwa_med.nc"))
 
@@ -36,16 +42,22 @@ nwa_sal_sub <- nwa_sal[[target_dates]]
 
 ### load NEP data #####
 #### bottom DO #####
-#nep_bo2_atm <- rast(here("data/enviro/nep/do/atm/nep_bo2_atm.nc"))
+# nep_bo2 <- rast(here("data/enviro/nep/do/raw/btm_o2.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+# nep_sob <- rast(here("data/enviro/nep/salinity/raw/sob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+# nep_tob <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
+# nep_bo2_atm <- rast_do_to_atm(do = nep_bo2, t = nep_tob, s = nep_sob)
+#nep_bo2_atm_rot <- rotate(nep_bo2_atm)
 
-    #filter for date range
-      #target_dates <- time(nep_bo2_atm) >= ym("1995-01") & time(nep_bo2_atm) <= ym("2019-12")
-      #nep_bo2_sub <- nep_bo2_atm[[target_dates]]
+#writeCDF(nep_bo2_atm_rot, here("data/enviro/nep/do/atm/nep_bo2_atm.nc"), overwrite = TRUE)
+# #nep_bo2_atm <- rast(here("data/enviro/nep/do/atm/nep_bo2_atm.nc"))
 
-    #calculate median across area for Tpref and update crs for cropping
-      #med_bo2 <- median(nep_bo2_sub, na.rm = TRUE)
-      #med_bo2_rot <- rotate(med_bo2)
-      #writeCDF(med_bo2_rot, here("data/enviro/nep/do/processed/do_nep_med_rot.nc"))
+#     #filter for date range
+#       target_dates <- time(nep_bo2_atm) >= ym("1995-01") & time(nep_bo2_atm) <= ym("2019-12")
+#       nep_bo2_sub <- nep_bo2_atm[[target_dates]]
+
+#     #calculate median across area for Tpref and update crs for cropping
+#       med_bo2 <- median(nep_bo2_sub, na.rm = TRUE)
+#       writeCDF(med_bo2_rot, here("data/enviro/nep/do/processed/do_nep_med_rot.nc"), overwrite = TRUE)
 
 med_bo2_rot <- rast(here("data/enviro/nep/do/processed/do_nep_med_rot.nc"))
 
@@ -114,37 +126,14 @@ get_OxyThresh <- function(sp_dat, region){
       temp_dat$thresh_med = global_thresh[1,1]
 
   } else if(region == "nwa" && enviro_layer == "pelagic"){
-    # get right depth layers
-      min_layer <- which.min(abs(depth(nwa_o2_sub) - sp_dat$min_depth[i]))
-      min_seq <- seq(from = min_layer, to = nlyr(nwa_o2_sub), by = length(unique(depth(nwa_o2_sub))))
-
-      med_layer <- which.min(abs(depth(nwa_o2_sub) - sp_dat$med_depth[i]))
-      med_seq <- seq(from = med_layer, to = nlyr(nwa_o2_sub), by = length(unique(depth(nwa_o2_sub))))
+     # get species do layers 
+      min_o2_crop <- rast(here(paste0("data/enviro/nwa/do/atm/hull_crop/", curr_sp, "/min_depth/min_depth_o2.nc")))
+      med_o2_crop <- rast(here(paste0("data/enviro/nwa/do/atm/hull_crop/", curr_sp, "/med_depth/med_depth_o2.nc")))
+      quant_o2_crop <- rast(here(paste0("data/enviro/nwa/do/atm/hull_crop/", curr_sp, "/quant_depth/quant_depth_o2.nc")))
     
-      quant_layer <- which.min(abs(depth(nwa_o2_sub) - sp_dat$quant_depth[i]))
-      quant_seq <- seq(from = quant_layer, to = nlyr(nwa_o2_sub), by = length(unique(depth(nwa_o2_sub))))
-    
-      min_o2_rast <- nwa_o2_sub[[min_seq]]
-      min_temp_rast <- nwa_temp_sub[[min_seq]]
-      min_sal_rast <- nwa_sal_sub[[min_seq]]
-    
-      med_o2_rast <- nwa_o2_sub[[med_seq]]
-      med_temp_rast <- nwa_temp_sub[[med_seq]]
-      med_sal_rast <- nwa_sal_sub[[med_seq]]
-    
-      quant_o2_rast <- nwa_o2_sub[[quant_seq]]
-      quant_temp_rast <- nwa_temp_sub[[quant_seq]]
-      quant_sal_rast <- nwa_sal_sub[[quant_seq]]
-    
-      #crop and convert do to atm
-      min_o2_atm <- do_to_atm(do = min_o2_rast, t = min_temp_rast, s = min_sal_rast)
-      med_o2_atm <- do_to_atm(do = med_o2_rast, t = med_temp_rast, s = med_sal_rast)
-      quant_o2_atm <- do_to_atm(do = quant_o2_rast, t = quant_temp_rast, s = quant_sal_rast)
-      
       #calculate median across area for Tpref, Tmin, Tquant
       #min depth OxyThresh
         #crop and take median
-      min_o2_crop <- crop(min_o2_atm, hull, mask = TRUE)
       min_o2_med <- median(min_o2_crop)
       
         #get 10th percentile
@@ -153,7 +142,6 @@ get_OxyThresh <- function(sp_dat, region){
       
       #median depth OxyThresh
         #crop and take median
-      med_o2_crop <- crop(med_o2_atm, hull, mask = TRUE)
       med_o2_med <- median(med_o2_crop)
 
         #get 10th percentile
@@ -162,7 +150,6 @@ get_OxyThresh <- function(sp_dat, region){
 
       #75% quantile depth OxyThresh
         #crop and take median
-      quant_o2_crop <- crop(quant_o2_atm, hull, mask = TRUE)
       quant_o2_med <- median(quant_o2_crop)
 
       #get 10th percentile
@@ -178,37 +165,14 @@ get_OxyThresh <- function(sp_dat, region){
       temp_dat$thresh_med = global_thresh[1,1]
 
   } else if(region == "nep" && enviro_layer == "pelagic"){
-    # get right depth layers
-      min_layer <- which.min(abs(depth(nep_o2_sub) - sp_dat$min_depth[i]))
-      min_seq <- seq(from = min_layer, to = nlyr(nep_o2_sub), by = length(unique(depth(nep_o2_sub))))
+      # get species do layers 
+      min_o2_crop <- rast(here(paste0("data/enviro/nep/do/atm/hull_crop/", curr_sp, "/min_depth/min_depth_o2.nc")))
+      med_o2_crop <- rast(here(paste0("data/enviro/nep/do/atm/hull_crop/", curr_sp, "/med_depth/med_depth_o2.nc")))
+      quant_o2_crop <- rast(here(paste0("data/enviro/nep/do/atm/hull_crop/", curr_sp, "/quant_depth/quant_depth_o2.nc")))
 
-      med_layer <- which.min(abs(depth(nep_o2_sub) - sp_dat$med_depth[i]))
-      med_seq <- seq(from = med_layer, to = nlyr(nep_o2_sub), by = length(unique(depth(nep_o2_sub))))
-    
-      quant_layer <- which.min(abs(depth(nep_o2_sub) - sp_dat$quant_depth[i]))
-      quant_seq <- seq(from = quant_layer, to = nlyr(nep_o2_sub), by = length(unique(depth(nep_o2_sub))))
-    
-      min_o2_rast <- nep_o2_sub[[min_seq]]
-      min_temp_rast <- nep_temp_sub[[min_seq]]
-      min_sal_rast <- nep_sal_sub[[min_seq]]
-    
-      med_o2_rast <- nep_o2_sub[[med_seq]]
-      med_temp_rast <- nep_temp_sub[[med_seq]]
-      med_sal_rast <- nep_sal_sub[[med_seq]]
-    
-      quant_o2_rast <- nep_o2_sub[[quant_seq]]
-      quant_temp_rast <- nep_temp_sub[[quant_seq]]
-      quant_sal_rast <- nep_sal_sub[[quant_seq]]
-    
-      #crop and convert do to atm
-      min_o2_atm <- do_to_atm(do = min_o2_rast, t = min_temp_rast, s = min_sal_rast)
-      med_o2_atm <- do_to_atm(do = med_o2_rast, t = med_temp_rast, s = med_sal_rast)
-      quant_o2_atm <- do_to_atm(do = quant_o2_rast, t = quant_temp_rast, s = quant_sal_rast)
-      
       #calculate median across area for Tpref, Tmin, Tquant
       #min depth OxyThresh
         #crop and take median
-      min_o2_crop <- crop(min_o2_atm, hull, mask = TRUE)
       min_o2_med <- median(min_o2_crop)
       
         #get 10th percentile
@@ -217,7 +181,6 @@ get_OxyThresh <- function(sp_dat, region){
       
       #median depth OxyThresh
         #crop and take median
-      med_o2_crop <- crop(med_o2_atm, hull, mask = TRUE)
       med_o2_med <- median(med_o2_crop)
 
         #get 10th percentile
@@ -226,7 +189,6 @@ get_OxyThresh <- function(sp_dat, region){
 
       #75% quantile depth OxyThresh
         #crop and take median
-      quant_o2_crop <- crop(quant_o2_atm, hull, mask = TRUE)
       quant_o2_med <- median(quant_o2_crop)
 
       #get 10th percentile
@@ -258,5 +220,4 @@ all_oxythresh2 <- merge(sp_dat1, all_oxythresh, all.x = TRUE)
 
 #save tpref data
 saveRDS(all_oxythresh2, file = here("data/agi/sp_dat_oxythresh.rds"))
-sp_dat_oxythresh <- readRDS(here("data/agi/sp_dat_oxythresh.rds"))
 

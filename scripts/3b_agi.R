@@ -92,7 +92,7 @@ nep_ox/nwa_ox
 land <- ne_countries(scale = "large", returnclass = "sf")
 
   #agi raster bottom species
-agi_bot <- AGI(sp_name = "Atlantic cod", enviro = "bottom")
+agi_bot <- AGI(sp_name = "Black sea bass", enviro = "bottom")
 agi_crit_bot <- get_crit(agi = agi_bot, enviro = "bottom")
 
 ggplot() +
