@@ -21,8 +21,15 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
         #load enviro data
         bo2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/", agi_dat2$region, "_bo2_atm.nc")))
 
-        bto_folder <- list.files(here(paste0("data/enviro/", agi_dat2$region, "/temp/raw/")), full.names = TRUE, pattern = "tob")
-        bto <- rast(bto_folder[1])
+            if(agi_dat2$region[1] == "nwa"){ 
+              bto_folder <- list.files(here(paste0("data/enviro/", agi_dat2$region, "/temp/raw/")), full.names = TRUE, pattern = "tob")
+              bto <- rast(bto_folder[1])
+            }
+              
+            if(agi_dat2$region[1] == "nep"){
+              bto_folder <- list.files(here(paste0("data/enviro/", agi_dat2$region, "/temp/processed/")), full.names = TRUE, pattern = "tob")
+              bto <- rast(bto_folder[1])
+            }
 
         #get species hull
         sp_hull_path <- sp_hull[grepl(sp_name, sp_hull)]
@@ -81,7 +88,7 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
         }
   
       return(agi_all)
-    } #end of benthic 
+      } #end of benthic 
 
     if (enviro == "pelagic"){ #end of benthic
         #load o2 and temp rast data per depth 

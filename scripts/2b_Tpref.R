@@ -30,12 +30,11 @@ nwa_temp <- rast(here("data/enviro/nwa/temp/processed/temp_nwa_crop.nc"))
 #nep_btemp <- rast(here("data/enviro/nep/temp/raw/tob.nep.full.hcast.monthly.regrid.r20250912.199301-202506.nc"))
 
     #filter for date range
-      #target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
-      #nep_btemp_sub <- nep_btemp[[target_dates]]
+      # target_dates <- time(nep_btemp) >= ym("1995-01") & time(nep_btemp) <= ym("2019-12")
+      # nep_btemp_sub <- nep_btemp[[target_dates]]
     
     #calculate median across area for Tpref and update crs for cropping
       #med_btemp <- median(nep_btemp_sub, na.rm = TRUE)
-      #med_btemp_rot <- rotate(med_btemp)
       #writeCDF(med_btemp_rot, here("data/enviro/nep/temp/processed/btemp_nwa_median_rot.nc"))
 
 med_btemp_rot <- rast(here("data/enviro/nep/temp/processed/btemp_nep_median_rot.nc"))
