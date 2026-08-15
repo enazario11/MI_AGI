@@ -371,6 +371,10 @@ Ran example plot for sea bass as a proof of concept. Can add other species with 
 #| label: agi crit time
 #| echo: false
 #| out-width: 100%
+#| results: hide
+#| fig-width: 10
+#| fig-height: 8
+
 
 agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom", take_median = FALSE)
 agi_crit_bas <- quantile(values(agi_bas), 0.10, na.rm = TRUE)
@@ -413,7 +417,7 @@ crit_df_bas <- crit_df_bas %>%
 
 ggplot(crit_df_bas, aes(date, perc_crit*100)) + 
     geom_line(linewidth = 1.3, color = "grey60")+
-    geom_point(size = 4, aes(color = season))+
+    geom_point(size = 3, aes(color = season))+
     ylab("Percent area below AGIcrit (%)")+
     xlab("")+
     scale_color_manual(values = c("#2C7329", "goldenrod", "#C07A3F", "#5F9ACE"))+
