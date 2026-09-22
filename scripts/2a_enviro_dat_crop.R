@@ -57,3 +57,38 @@ nep_union <- st_union(nep_hulls)
   #save for python processing to get crop file (crop_enviro_zarr.py file)
 nep_union_sf <- st_sf(region = "nep", geometry = nep_union)
 st_write(nep_union_sf, "data/enviro/nep/nep_union.gpkg", delete_dsn = TRUE)
+
+### nwa management hulls #####
+bathy_nwa <- rast(here("data/enviro/nwa/bathy/gebco_2026_n45.0_s25.0_w-82.0_e-66.0.nc"))
+bathy_nwa <- ifel(bathy_nwa  <= -750, NA, bathy_nwa)
+plot(bathy_nwa)
+
+#full management domain
+nwa_poly <- as.polygons(!is.na(bathy_nwa), dissolve = TRUE)
+writeVector(nwa_poly, here("data/enviro/nwa/nwa_full.gpkg"))
+
+#SE
+se_ext <- ext(-82, -75, 25, 35)
+se_poly <- crop(nwa_poly, se_ext)
+writeVector(se_poly, here("data/enviro/nwa/nwa_se.gpkg"))
+
+#MAB/NE
+mab_ext <- ext(-82, -66, 35, 45)
+mab_poly <- crop(nwa_poly, mab_ext)
+writeVector(mab_poly, here("data/enviro/nwa/nwa_mab_ne.gpkg"))
+
+#NE
+ne_ext <- ext(-82, -62, 40.5, 45)
+ne_poly <- crop(nwa_poly, ne_ext)
+writeVector(ne_poly, here("data/enviro/nwa/nwa_ne.gpkg"))
+
+### nep management hulls #####
+bathy_nep <- rast(here("data/enviro/nep/bathy/gebco_2026_n55.0_s0.0_w-170.0_e-100.0.nc"))
+domain <- ext(-127, -115, 30, 50)
+
+bathy_nep <- crop(bathy_nep, domain)
+bathy_nep <- ifel(bathy_nep  <= -2300, NA, bathy_nep)
+plot(bathy_nep)
+
+nep_poly <- as.polygons(!is.na(bathy_nep), dissolve = TRUE)
+writeVector(nep_poly, here("data/enviro/nep/nep_full.gpkg"))
