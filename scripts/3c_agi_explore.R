@@ -17,11 +17,13 @@ oxytemp <- sp_dat_oxythresh %>% select(c(Common.name, thresh_med, thresh_min, th
 tpref_oxythresh <- merge(sp_dat_tpref, oxytemp, by = "Common.name", all = TRUE)
 agi_temp <- tpref_oxythresh %>% select(c(Common.name, min_depth, med_depth, quant_depth, Tpref_min, Tpref_med, Tpref_quant, thresh_min, thresh_med, thresh_quant))
 
-#load fishbase coef data
+#load fishbase coef  and mgmt zone data
 agi_coef <- read.csv(here("data/agi/agi_coef.csv"))
+mgmt_zone <- read.csv(here("data/agi/mgmt_region.csv"))
 
 #combine fishbase coefs and tpref/oxythresh values
 agi_dat <- agi_coef %>% left_join(agi_temp, by = "Common.name")
+agi_dat <- agi_dat %>% left_join(mgmt_zone, by = "Common.name")
 
 #exploratory analyses of tpref and oxythresh
 agi_viz <- agi_dat[!duplicated(agi_dat$Common.name), ]

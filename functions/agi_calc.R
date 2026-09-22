@@ -31,13 +31,14 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
               bto <- rast(bto_folder[1])
             }
 
-        #get species hull
-        sp_hull_path <- sp_hull[grepl(sp_name, sp_hull)]
-        sp_hull_file <- st_read(paste0(sp_hull_path, "/", agi_dat2$Genus[1], " ", agi_dat2$Species[1], ".shp"))
+        #get management crop
+        mgmt_hull_folder <- list.files(paste0("data/enviro/", agi_dat2$region), full.names = TRUE, pattern = agi_dat2$mgmt_region)
+        mgmt_hull <- st_read(mgmt_hull_folder[1])
+        mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
         #crop enviro files to species hull
-        bo2_crop <- crop(bo2_atm, sp_hull_file, mask = TRUE)
-        bto_crop <- crop(bto, sp_hull_file, mask = TRUE)
+        bo2_crop <- crop(bo2_atm, mgmt_hull, mask = TRUE)
+        bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
   
       #get region specific agi coefs
         region_coef <- data.frame(
@@ -92,12 +93,12 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
 
     if (enviro == "pelagic"){ #end of benthic
         #load o2 and temp rast data per depth 
-        min_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/hull_crop/", sp_name, "/min_depth/min_depth_temp.nc")))
-        min_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/hull_crop/", sp_name, "/min_depth/min_depth_o2.nc")))
-        med_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/hull_crop/", sp_name, "/med_depth/med_depth_temp.nc")))
-        med_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/hull_crop/", sp_name, "/med_depth/med_depth_o2.nc")))
-        quant_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/hull_crop/", sp_name, "/quant_depth/quant_depth_temp.nc")))
-        quant_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/hull_crop/", sp_name, "/quant_depth/quant_depth_o2.nc")))
+        min_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/mgmt_hull/", sp_name, "/min_depth/min_depth_temp.nc")))
+        min_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/mgmt_hull/", sp_name, "/min_depth/min_depth_o2.nc")))
+        med_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/mgmt_hull/", sp_name, "/med_depth/med_depth_temp.nc")))
+        med_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/mgmt_hull/", sp_name, "/med_depth/med_depth_o2.nc")))
+        quant_temp <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/temp/processed/mgmt_hull/", sp_name, "/quant_depth/quant_depth_temp.nc")))
+        quant_o2_atm <- rast(here(paste0("data/enviro/", agi_dat2$region ,"/do/atm/mgmt_hull/", sp_name, "/quant_depth/quant_depth_o2.nc")))
 
         #get region specific agi coefs
         region_coef <- data.frame(
