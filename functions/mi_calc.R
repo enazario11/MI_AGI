@@ -8,11 +8,8 @@ library(tidyterra)
 library(patchwork)
 source(here("functions/oxy_demand_functions_test.R"))
 
-#load species hulls
-sp_hull <- list.files("data/fish_hull", full.names = TRUE)
-
 #calculate map of AGI 
-MI <- function(sp_name, enviro, A0, E0, region){
+MI <- function(sp_name, enviro, A0, E0, region, mgmt){
   
       if(enviro == "bottom"){
         #load enviro data
@@ -21,15 +18,15 @@ MI <- function(sp_name, enviro, A0, E0, region){
         bto_folder <- list.files(here(paste0("data/enviro/", region, "/temp/processed/")), full.names = TRUE, pattern = "tob")
         bto <- rast(bto_folder[1])
 
-        #get species hull
-        sp_hull_path <- sp_hull[grepl(sp_name, sp_hull)]
-        sp_hull_file <- list.files(sp_hull_path, full.names = TRUE, pattern = ".shp")
-        sp_hull_file <- st_read(sp_hull_file)
+        #get management crop
+        mgmt_hull_folder <- list.files(paste0("data/enviro/", region), full.names = TRUE, pattern = mgmt)
+        mgmt_hull <- st_read(mgmt_hull_folder[1])
+        mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
         #crop enviro files to species hull
-        bo2_crop <- crop(bo2_atm, sp_hull_file, mask = TRUE)
+        bo2_crop <- crop(bo2_atm, mgmt_hull, mask = TRUE)
         bo2_kpa <- bo2_crop*101.325
-        bto_crop <- crop(bto, sp_hull_file, mask = TRUE)
+        bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
   
         #calculate mi
         mi <- MI_calc(A0 = A0, DO = bo2_kpa, E0 = E0, T_C = bto_crop)
@@ -43,12 +40,12 @@ MI <- function(sp_name, enviro, A0, E0, region){
 
     if (enviro == "pelagic"){ #end of benthic
       #load o2 and temp rast data per depth 
-      min_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/hull_crop/", sp_name, "/min_depth/min_depth_temp.nc")))
-      min_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/hull_crop/", sp_name, "/min_depth/min_depth_o2.nc")))*101.325
-      med_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/hull_crop/", sp_name, "/med_depth/med_depth_temp.nc")))
-      med_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/hull_crop/", sp_name, "/med_depth/med_depth_o2.nc")))*101.325
-      quant_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/hull_crop/", sp_name, "/quant_depth/quant_depth_temp.nc")))
-      quant_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/hull_crop/", sp_name, "/quant_depth/quant_depth_o2.nc")))*101.325
+      min_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/mgmt_hull/", sp_name, "/min_depth/min_depth_temp.nc")))
+      min_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/mgmt_hull/", sp_name, "/min_depth/min_depth_o2.nc")))*101.325
+      med_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/mgmt_hull/", sp_name, "/med_depth/med_depth_temp.nc")))
+      med_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/mgmt_hull/", sp_name, "/med_depth/med_depth_o2.nc")))*101.325
+      quant_temp <- rast(here(paste0("data/enviro/", region ,"/temp/processed/mgmt_hull/", sp_name, "/quant_depth/quant_depth_temp.nc")))
+      quant_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/mgmt_hull/", sp_name, "/quant_depth/quant_depth_o2.nc")))*101.325
 
       #mi min depth
       min_mi <- MI_calc(A0 = A0, DO = min_o2_kpa, E0 = E0, T_C = min_temp)

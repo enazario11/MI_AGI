@@ -8,8 +8,6 @@ library(tidyterra)
 library(patchwork)
 source(here("functions/oxy_demand_functions_test.R"))
 
-#load species hulls
-sp_hull <- list.files("data/fish_hull", full.names = TRUE)
 
 #calculate map of AGI 
 AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider adding enviro dat paths as arguments

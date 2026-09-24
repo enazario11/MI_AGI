@@ -29,7 +29,8 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(patchwork)
 library(glmmTMB)
-set.seed(0904)
+library(quarto)
+set.seed(0902)
 source(here("functions/agi_calc.R"))
 source(here("functions/mi_calc.R"))
 
@@ -45,11 +46,14 @@ oxytemp <- sp_dat_oxythresh %>% select(c(Common.name, thresh_med, thresh_min, th
 tpref_oxythresh <- merge(sp_dat_tpref, oxytemp, by = "Common.name", all = TRUE)
 agi_temp <- tpref_oxythresh %>% select(c(Common.name, min_depth, med_depth, quant_depth, Tpref_min, Tpref_med, Tpref_quant, thresh_min, thresh_med, thresh_quant))
 
-#load fishbase coef data
+#load fishbase coef data and management zone codes
 agi_coef <- read.csv(here("data/agi/agi_coef.csv"))
+mgmt_zone <- read.csv(here("data/agi/mgmt_region.csv"))
+
 
 #combine fishbase coefs and tpref/oxythresh values
 agi_dat <- agi_coef %>% left_join(agi_temp, by = "Common.name")
+agi_dat <- agi_dat %>% left_join(mgmt_zone, by = "Common.name")
 
 #custom theme
 theme_custom <- function(){
@@ -218,7 +222,7 @@ ggplot() +
 
 agi_cod <- AGI(sp_name = "Atlantic cod", enviro = "bottom")
 agi_crit_cod <- get_crit(agi_cod, "bottom")
-mi_cod <- MI(sp_name = "Atlantic cod", enviro = "bottom", A0 = 6.68E-07, E0 = 0.42, region = "nwa")
+mi_cod <- MI(sp_name = "Atlantic cod", enviro = "bottom", A0 = 6.68E-07, E0 = 0.42, region = "nwa", mgmt = "NE_MAB")
 mi_crit_cod <- raster::clamp(mi_cod, upper = 2.74, values = FALSE)
 mi_crit_cod <- as.polygons(mi_crit_cod) %>% mutate(lyr = names(mi_cod))
 
@@ -276,9 +280,10 @@ pred_df_cod <- data.frame(mi = seq(min(cod_df$mi), max(cod_df$mi), length = 1000
 pred_df_cod$pred_agi <- predict(mod_cod, type = "response", newdata = pred_df_cod, re.form = NA)
 
 ggplot() + 
-    geom_point(aes(x = values(mi_cod), y = values(agi_cod)), color = "cornflowerblue", size = 2, alpha = 0.8) + 
+    geom_point(aes(x = terra::values(mi_cod), y = values(agi_cod)), color = "cornflowerblue", size = 2, alpha = 0.8) + 
     geom_line(data = pred_df_cod, aes(x = mi, y = pred_agi), color = "black", linewidth = 1.3) + 
     theme_custom()
+  
 ```
 
 ## Black sea bass
@@ -296,7 +301,7 @@ ggplot() +
 
 agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom")
 agi_crit_bas <- get_crit(agi_bas, enviro = "bottom")
-mi_bas <- MI(sp_name = "Black sea bass", enviro = "bottom", A0 = 4.07E-04, E0 = 0.27, region = "nwa")
+mi_bas <- MI(sp_name = "Black sea bass", enviro = "bottom", A0 = 4.07E-04, E0 = 0.27, region = "nwa", mgmt = "NE_MAB")
 mi_crit_bas <- raster::clamp(mi_bas, upper = 3.26, values = FALSE)
 mi_crit_bas <- as.polygons(mi_crit_bas) %>% mutate(lyr = names(mi_bas))
 
