@@ -29,7 +29,7 @@ MI <- function(sp_name, enviro, A0, E0, region, mgmt){
         bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
   
         #calculate mi
-        mi <- MI_calc(A0 = A0, DO = bo2_kpa, E0 = E0, T_C = bto_crop)
+        mi <- MI_calc_ES(A0 = A0, DO = bo2_kpa, E0 = E0, T_C = bto_crop)
 
         #take median across time
         mi_med <- median(mi, na.rm = TRUE)
@@ -48,21 +48,21 @@ MI <- function(sp_name, enviro, A0, E0, region, mgmt){
       quant_o2_kpa <- rast(here(paste0("data/enviro/", region ,"/do/atm/mgmt_hull/", sp_name, "/quant_depth/quant_depth_o2.nc")))*101.325
 
       #mi min depth
-      min_mi <- MI_calc(A0 = A0, DO = min_o2_kpa, E0 = E0, T_C = min_temp)
+      min_mi <- MI_calc_ES(A0 = A0, DO = min_o2_kpa, E0 = E0, T_C = min_temp)
       
       #take median across time
       mi_min <- median(min_mi, na.rm = TRUE)
       names(mi_min) <- paste(sp_name, "-", "agi_min_depth")
 
       #mi med depth
-      med_mi <- MI_calc(A0 = A0, DO = med_o2_kpa, E0 = E0, T_C = med_temp)
+      med_mi <- MI_calc_ES(A0 = A0, DO = med_o2_kpa, E0 = E0, T_C = med_temp)
       
       #take median across time
       mi_med <- median(med_mi, na.rm = TRUE)
       names(mi_med) <- paste(sp_name, "-", "agi_med_depth")
 
       #mi 75% quantile depth
-      quant_mi <- MI_calc(A0 = A0, DO = quant_o2_kpa, E0 = E0, T_C = quant_temp)
+      quant_mi <- MI_calc_ES(A0 = A0, DO = quant_o2_kpa, E0 = E0, T_C = quant_temp)
 
       #take median across time
       mi_quant <- median(quant_mi, na.rm = TRUE)

@@ -63,3 +63,14 @@ MI_calc <- function(A0, Bn = 0.01, DO, E0, kB = 0.000086173324, T_C){
   return(MI)
  
 }
+
+MI_calc_ES = function(A0, DO, E0, T_C) {
+  KB = 0.0000862
+  A0 = 1/((exp(12.25391))/100) # sidebar: if you run this you get 4.77x10^-4 which is what is reported in my paper
+  E0 = 0.26836 
+  invKBT = 1/(KB*(T_C + 273))
+  num = A0*(DO/100)
+  den = exp(-E0*invKBT)
+  MI = num/den
+  return(MI)
+}

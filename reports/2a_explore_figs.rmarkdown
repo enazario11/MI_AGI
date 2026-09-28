@@ -64,9 +64,6 @@ mgmt_zone <- read.csv(here("data/agi/mgmt_region.csv"))
 agi_dat <- agi_coef %>% left_join(agi_temp, by = "Common.name")
 agi_dat <- agi_dat %>% left_join(mgmt_zone, by = "Common.name")
 
-#load mi data
-mi_dat <- read.csv(here("data/mi/mi_coef.csv"))
-
 #custom theme
 theme_custom <- function(){
  theme_tq() + 
@@ -94,8 +91,8 @@ Black polygons outline regions below the AGIcrit. AGIcrit is calculated as the 1
 #| label: agi_bot
 #| echo: false
 #| out-width: "100%"
-#| fig-width: 8
-#| fig-height: 8
+#| fig-width: 12
+#| fig-height: 9
 #| results: hide
 
 agi_ground <- tpref_oxythresh %>% filter(enviro_layer == "bottom" & rows > 5)
@@ -158,8 +155,8 @@ for(i in 35:length(unique(agi_ground$Common.name))){
 #| label: agi_pel
 #| echo: false
 #| out-width: "100%"
-#| fig-width: 8
-#| fig-height: 8
+#| fig-width: 15
+#| fig-height: 12
 #| results: hide
 
 agi_pelagic <- tpref_oxythresh %>% filter(enviro_layer == "pelagic" & rows > 5)
@@ -169,7 +166,7 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
     curr_sp <- unique(agi_pelagic$Common.name)[i]
     curr_pel <- agi_pelagic %>% filter(Common.name == curr_sp)
 
-    agi_dat2 <- agi_dat %>% filter(Common.name == curr_sp)
+     agi_dat2 <- agi_dat %>% filter(Common.name == curr_sp)
     mgmt_hull_folder <- list.files(paste0("data/enviro/", agi_dat2$region), full.names = TRUE, pattern = agi_dat2$mgmt_region)
      mgmt_hull <- st_read(mgmt_hull_folder[1])
     
@@ -219,73 +216,6 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
 
 ::: panel-tabset
 ```{r}
-#| warning: false
-#| message: false
-#| label: all mi
-#| echo: false
-#| out-width: 100%
-#| layout-ncol: 2
-#| results: hide
-#| fig-width: 8
-#| fig-height: 8
-
-mi_dat <- mi_dat %>% drop_na(Pcrit)
-
-for(i in 1:length(unique(mi_dat$Common.name))){
-
-    curr_sp <- unique(mi_dat$Common.name)[i]
-    curr_enviro <- tpref_oxythresh %>% filter(Common.name == curr_sp)
-    mi_curr <- mi_dat %>% 
-        filter(Common.name == curr_sp) %>%
-        mutate(inv.T = 1/(0.0000862*(Temp + 273)), 
-               ln.Pcrit = log(Pcrit))
-    
-    mi_mod = lm(ln.Pcrit ~inv.T, data = mi_curr)
-    A0 = 1/((exp(mi_mod$coefficients[1]))/100) 
-    E0 = mi_mod$coefficients[2]
-
-    agi_dat2 <- agi_dat %>% filter(Common.name == curr_sp)
-    mgmt_hull_folder <- list.files(paste0("data/enviro/", agi_dat2$region), full.names = TRUE, pattern = agi_dat2$mgmt_region)
-     mgmt_hull <- st_read(mgmt_hull_folder[1])
-
-    mi_rast <- MI(sp_name = curr_sp, enviro = curr_enviro$enviro_layer, A0 = A0, E0 = E0, region = agi_dat2$region, mgmt = agi_dat2$mgmt_region)
-
-    curr_glob <- dat_glob %>% 
-        filter(accepted_name == paste(agi_dat2$Genus, agi_dat2$Species)) 
-    pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
-    
-    if(curr_pel$region == "nwa"){
-    ggplot() +
-      geom_spatraster(data = mi_rast) +
-      #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
-      geom_spatvector(data = pts, color = "black", alpha = 0.2) +
-      geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
-      coord_sf(xlim = as.vector(ext(mgmt_hull))[1:2] + c(-2, 2),
-               ylim = as.vector(ext(mgmt_hull))[3:4] + c(-2, 2),
-               expand = FALSE) +
-      scale_fill_whitebox_c(palette = "muted", direction = -1) +
-      labs(x = NULL, y = NULL, fill = "MI") +
-      tidyquant::theme_tq() + 
-      facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
-      theme_custom()
-        
-    } else if(curr_pel$region == "nep"){
-    ggplot() +
-      geom_spatraster(data = agi_pel) +
-      #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
-      geom_spatvector(data = pts, color = "black", alpha = 0.2) +
-      geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
-      coord_sf(xlim = as.vector(ext(mgmt_hull))[1:2] + c(-2, 2),
-               ylim = as.vector(ext(mgmt_hull))[3:4] + c(-2, 2),
-               expand = FALSE) +
-      scale_fill_whitebox_c(palette = "muted", direction = -1) +
-      labs(x = NULL, y = NULL, fill = "AGI") +
-      tidyquant::theme_tq() + 
-      facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
-      theme_custom()
-        }
-  
-}
 
 ```
 :::
@@ -467,7 +397,7 @@ Ran example plot for sea bass as a proof of concept. Can add other species with 
 #| fig-height: 8
 
 
-agi_bas <- AGI(sp_name = "Red snapper", enviro = "bottom", take_median = FALSE)
+agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom", take_median = FALSE)
 agi_crit_bas <- quantile(values(agi_bas), 0.10, na.rm = TRUE)
 
 #make df of % area < AGIcrit over time
