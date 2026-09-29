@@ -118,7 +118,7 @@ for(i in 35:length(unique(agi_ground$Common.name))){
 
 
     if(curr_ground$region == "nwa"){
-    ggplot() +
+    bot_plot <- ggplot() +
       geom_spatraster(data = agi_bot) +
       #geom_spatvector(data = agi_crit_bot, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
@@ -132,7 +132,7 @@ for(i in 35:length(unique(agi_ground$Common.name))){
       theme_custom()
         
     } else if(curr_ground$region == "nep"){
-    ggplot() +
+    bot_plot <- ggplot() +
       geom_spatraster(data = agi_bot) +
       #geom_spatvector(data = agi_crit_bot, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
@@ -146,6 +146,8 @@ for(i in 35:length(unique(agi_ground$Common.name))){
       theme_custom() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
+        
+        print(bot_plot)
     } #end for loop
 
 ```
@@ -181,7 +183,7 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
     pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
     
     if(curr_pel$region == "nwa"){
-    ggplot() +
+    pel_plot <- ggplot() +
       geom_spatraster(data = agi_pel) +
       #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
@@ -196,7 +198,7 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
       theme_custom()
         
     } else if(curr_pel$region == "nep"){
-    ggplot() +
+    pel_plot <- ggplot() +
       geom_spatraster(data = agi_pel) +
       #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
@@ -210,6 +212,7 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
       facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
       theme_custom()
         }
+   print(pel_plot)
 } #end loop
 
 ```
@@ -248,14 +251,14 @@ for(i in 1:length(unique(mi_dat$Common.name))){
     mgmt_hull_folder <- list.files(paste0("data/enviro/", agi_dat2$region), full.names = TRUE, pattern = agi_dat2$mgmt_region)
      mgmt_hull <- st_read(mgmt_hull_folder[1])
 
-    mi_rast <- MI(sp_name = curr_sp, enviro = curr_enviro$enviro_layer, A0 = A0, E0 = E0, region = agi_dat2$region, mgmt = agi_dat2$mgmt_region)
+    mi_rast <- MI(sp_name = curr_sp, enviro = curr_enviro$enviro_layer, A0 = A0, E0 = E0, region = agi_dat2$region[1], mgmt = agi_dat2$mgmt_region[1])
 
     curr_glob <- dat_glob %>% 
-        filter(accepted_name == paste(agi_dat2$Genus, agi_dat2$Species)) 
+        filter(accepted_name == paste(agi_dat2$Genus[1], agi_dat2$Species[1])) 
     pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
     
-    if(curr_pel$region == "nwa"){
-    ggplot() +
+    if(agi_dat2$region[1] == "nwa"){
+    mi_plot <- ggplot() +
       geom_spatraster(data = mi_rast) +
       #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
@@ -266,12 +269,11 @@ for(i in 1:length(unique(mi_dat$Common.name))){
       scale_fill_whitebox_c(palette = "muted", direction = -1) +
       labs(x = NULL, y = NULL, fill = "MI") +
       tidyquant::theme_tq() + 
-      facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
       theme_custom()
         
-    } else if(curr_pel$region == "nep"){
-    ggplot() +
-      geom_spatraster(data = agi_pel) +
+    } else if(agi_dat2$region[1] == "nep"){
+    mi_plot <- ggplot() +
+      geom_spatraster(data = mi_rast) +
       #geom_spatvector(data = agi_crit_pel, color = "black", fill = NA, linewidth = 1) +
       geom_spatvector(data = pts, color = "black", alpha = 0.2) +
       geom_sf(data = land, fill = "grey85", colour = "grey30", linewidth = 0.2) +
@@ -281,11 +283,10 @@ for(i in 1:length(unique(mi_dat$Common.name))){
       scale_fill_whitebox_c(palette = "muted", direction = -1) +
       labs(x = NULL, y = NULL, fill = "AGI") +
       tidyquant::theme_tq() + 
-      facet_wrap(~factor(lyr, levels = names(agi_pel)), labeller = label_wrap_gen(width = 25)) +
       theme_custom()
         }
-  
-}
+  print(mi_plot)
+} #end for loop
 
 ```
 :::
