@@ -98,9 +98,11 @@ Black polygons outline regions below the AGIcrit. AGIcrit is calculated as the 1
 #| fig-height: 8
 #| results: hide
 
-agi_ground <- tpref_oxythresh %>% filter(enviro_layer == "bottom" & rows > 5)
+agi_ground <- tpref_oxythresh %>% filter(enviro_layer == "bottom" & rows > 10)
 
-for(i in 35:length(unique(agi_ground$Common.name))){
+for(i in 1:length(unique(agi_ground$Common.name))){
+
+    print(i)
 
     curr_sp <- unique(agi_ground$Common.name)[i]
     curr_ground <- agi_ground %>% filter(Common.name == curr_sp)
@@ -115,7 +117,6 @@ for(i in 35:length(unique(agi_ground$Common.name))){
     curr_glob <- dat_glob %>% 
         filter(accepted_name == paste(curr_ground$Genus, curr_ground$Species)) 
     pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
-
 
     if(curr_ground$region == "nwa"){
     bot_plot <- ggplot() +
@@ -166,7 +167,7 @@ for(i in 35:length(unique(agi_ground$Common.name))){
 
 agi_pelagic <- tpref_oxythresh %>% filter(enviro_layer == "pelagic" & rows > 5)
 
-for(i in 11:length(unique(agi_pelagic$Common.name))){
+for(i in 1:length(unique(agi_pelagic$Common.name))){
 
     curr_sp <- unique(agi_pelagic$Common.name)[i]
     curr_pel <- agi_pelagic %>% filter(Common.name == curr_sp)
@@ -179,7 +180,7 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
     #agi_crit_pel <- get_crit(agi = agi_pel, enviro = "pelagic")
 
     curr_glob <- dat_glob %>% 
-        filter(accepted_name == paste(curr_ground$Genus, curr_ground$Species)) 
+        filter(accepted_name == paste(curr_pel$Genus, curr_pel$Species)) 
     pts <- vect(curr_glob, geom = c("longitude", "latitude"), crs = "EPSG:4326")
     
     if(curr_pel$region == "nwa"){
@@ -220,17 +221,15 @@ for(i in 11:length(unique(agi_pelagic$Common.name))){
 
 # All MI maps by species
 
-::: panel-tabset
 ```{r}
 #| warning: false
 #| message: false
-#| label: all mi
+#| label: all_mi
 #| echo: false
-#| out-width: 100%
-#| layout-ncol: 2
-#| results: hide
+#| out-width: "100%"
 #| fig-width: 8
 #| fig-height: 8
+#| output: true
 
 mi_dat <- mi_dat %>% drop_na(Pcrit)
 
@@ -249,7 +248,7 @@ for(i in 1:length(unique(mi_dat$Common.name))){
 
     agi_dat2 <- agi_dat %>% filter(Common.name == curr_sp)
     mgmt_hull_folder <- list.files(paste0("data/enviro/", agi_dat2$region), full.names = TRUE, pattern = agi_dat2$mgmt_region)
-     mgmt_hull <- st_read(mgmt_hull_folder[1])
+     mgmt_hull <- st_read(mgmt_hull_folder[1], quiet = TRUE)
 
     mi_rast <- MI(sp_name = curr_sp, enviro = curr_enviro$enviro_layer, A0 = A0, E0 = E0, region = agi_dat2$region[1], mgmt = agi_dat2$mgmt_region[1])
 
@@ -268,6 +267,7 @@ for(i in 1:length(unique(mi_dat$Common.name))){
                expand = FALSE) +
       scale_fill_whitebox_c(palette = "muted", direction = -1) +
       labs(x = NULL, y = NULL, fill = "MI") +
+      facet_wrap(~lyr, labeller = label_wrap_gen(width = 35)) +
       tidyquant::theme_tq() + 
       theme_custom()
         
@@ -281,15 +281,16 @@ for(i in 1:length(unique(mi_dat$Common.name))){
                ylim = as.vector(ext(mgmt_hull))[3:4] + c(-2, 2),
                expand = FALSE) +
       scale_fill_whitebox_c(palette = "muted", direction = -1) +
-      labs(x = NULL, y = NULL, fill = "AGI") +
+      labs(x = NULL, y = NULL, fill = "MI") +
+      facet_wrap(~lyr, labeller = label_wrap_gen(width = 35)) +
       tidyquant::theme_tq() + 
       theme_custom()
         }
+        
   print(mi_plot)
 } #end for loop
 
 ```
-:::
 
 # MI-AGI comparisons
 
@@ -455,7 +456,7 @@ ggplot() +
 
 # AGI time series
 
-Ran example plot for sea bass as a proof of concept. Can add other species with notable range shifts.
+Ran example plot for red snapper (SE management zone).
 
 ```{r}
 #| warning: false

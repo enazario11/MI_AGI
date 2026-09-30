@@ -20,7 +20,7 @@ MI <- function(sp_name, enviro, A0, E0, region, mgmt){
 
         #get management crop
         mgmt_hull_folder <- list.files(paste0("data/enviro/", region), full.names = TRUE, pattern = mgmt)
-        mgmt_hull <- st_read(mgmt_hull_folder[1])
+        mgmt_hull <- st_read(mgmt_hull_folder[1], quiet = TRUE)
         mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
         #crop enviro files to species hull

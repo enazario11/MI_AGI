@@ -34,7 +34,7 @@ rast_do_to_atm <- function(do, t, s, filename = ""){
 }
 
 #caclulated metabolic demand 
-OxyDemand<- function(Tpref, PO2_thresh, T_C, W = NULL, d = 0.700, K, j2 = 8000, j1 = 4500, 
+OxyDemand<- function(Tpref, PO2_thresh, T_C, W = NULL, d = 0.700, K = NA, j2 = 8000, j1 = 4500, 
                       Linf, LwA, LwB){
 
   # removing K/(1-d) because it cancels out in numerator and denominator
