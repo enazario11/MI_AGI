@@ -34,7 +34,7 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
         mgmt_hull <- st_read(mgmt_hull_folder[1])
         mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
-        #crop enviro files to species hull
+        #crop enviro files to management zone
         bo2_crop <- crop(bo2_atm, mgmt_hull, mask = TRUE)
         bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
   

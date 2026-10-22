@@ -81,6 +81,81 @@ theme_custom <- function(){
 
 ```
 
+# pO~2~ and temperature by region
+
+```{r}
+#| warning: false
+#| message: false
+#| label: enviro_hists
+#| out-width: "100%"
+#| fig-width: 8
+#| fig-height: 8
+#| results: hide
+
+#NWA
+#Surface and bottom oxygen
+nwa_bo2 <- rast("data/enviro/nwa/do/atm/nwa_bo2_atm.nc")
+
+mgmt_hull_full_nwa <- st_read("data/enviro/nwa/nwa_full.gpkg")
+mgmt_hull_full_nwa <- mgmt_hull_full_nwa[mgmt_hull_full_nwa$elevation == 1,]
+
+#crop enviro files to hull
+nwa_bo2_crop <- crop(nwa_bo2, mgmt_hull_full_nwa)
+nwa_bo2_crop <- mask(nwa_bo2_crop, mgmt_hull_full_nwa)
+nwa_bo2_med <- median(nwa_bo2_crop)
+
+hist(nwa_bo2_med, xlab = "bottom oxygen (atm)", main = "NWA, median")
+
+nwa_so2 <- rast("data/enviro/nwa/do/atm/mgmt_hull/Bluefish/min_depth/min_depth_o2.nc")
+nwa_so2_med <- median(nwa_so2)
+
+hist(nwa_so2_med, xlab = "surface oxygen (atm)", main = "NWA, median")
+
+#Surface, 300m, bottom temperature
+nwa_btemp <- rast("data/enviro/nwa/temp/processed/tob_nwa_median.nc") #already median so don't take again
+nwa_btemp_crop <- crop(nwa_btemp, mgmt_hull_full_nwa)
+nwa_btemp_crop <- mask(nwa_btemp_crop, mgmt_hull_full_nwa)
+
+hist(nwa_btemp_crop, xlab = "bottom temperature (C)", main = "NWA, median")
+
+nwa_sst <- rast("data/enviro/nwa/temp/processed/mgmt_hull/Bluefish/min_depth/min_depth_temp.nc")
+nwa_sst_med <- median(nwa_sst)
+
+hist(nwa_sst_med, xlab = "surface temperature (C)", main = "NWA, median")
+
+#NEP
+#Surface and bottom oxygen
+nep_bo2 <- rast("data/enviro/nep/do/atm/nep_bo2_atm.nc")
+
+mgmt_hull_full_nep <- st_read("data/enviro/nep/nep_WC.gpkg")
+mgmt_hull_full_nep <- mgmt_hull_full_nep[mgmt_hull_full_nep$elevation == 1,]
+
+nep_bo2_crop <- crop(nep_bo2, mgmt_hull_full_nep)
+nep_bo2_crop <- mask(nep_bo2_crop, mgmt_hull_full_nep)
+nep_bo2_med <- median(nep_bo2_crop)
+
+hist(nep_bo2_med, xlab = "bottom oxygen (atm)", main = "NEP, median")
+
+nep_so2 <- rast("data/enviro/nep/do/atm/mgmt_hull/Northern anchovy/min_depth/min_depth_o2.nc")
+nep_so2_med <- median(nep_so2)
+
+hist(nep_so2_med, xlab = "surface oxygen (atm)", main = "NEP, median")
+
+#Surface, 300m, bottom temperature
+nep_btemp <- rast("data/enviro/nep/temp/processed/btemp_nep_median_rot.nc") #already has median so don't take again
+nep_btemp_crop <- crop(nep_btemp, mgmt_hull_full_nep)
+nep_btemp_crop <- mask(nep_btemp_crop, mgmt_hull_full_nep)
+
+hist(nep_btemp_crop, xlab = "bottom temperature (C)", main = "NEP, median")
+
+nep_sst <- rast("data/enviro/nep/temp/processed/mgmt_hull/Northern anchovy/min_depth/min_depth_temp.nc")
+nep_sst_med <- median(nep_sst)
+
+hist(nep_sst_med, xlab = "surface temperature (C)", main = "NEP, median")
+
+
+```
+
 # All AGI maps by species and region
 
 Black polygons outline regions below the AGIcrit. AGIcrit is calculated as the 10th percentile for that species and data layer, so the threshold will vary by region and depth in the case of pelagic species.
