@@ -464,7 +464,7 @@ ggplot() +
 
 agi_bas <- AGI(sp_name = "Black sea bass", enviro = "bottom")
 agi_crit_bas <- get_crit(agi_bas, enviro = "bottom")
-mi_bas <- MI(sp_name = "Black sea bass", enviro = "bottom", A0 = 4.07E-04, E0 = 0.27, region = "nwa", mgmt = "NE_MAB")
+mi_bas <- MI(sp_name = "Black sea bass", enviro = "bottom", A0 = 4.07E-04, E0 = 0.27, region = "nwa", mgmt = "full")
 mi_crit_bas <- raster::clamp(mi_bas, upper = 3.26, values = FALSE)
 mi_crit_bas <- as.polygons(mi_crit_bas) %>% mutate(lyr = names(mi_bas))
 

@@ -24,9 +24,11 @@ MI <- function(sp_name, enviro, A0, E0, region, mgmt){
         mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
         #crop enviro files to species hull
-        bo2_crop <- crop(bo2_atm, mgmt_hull, mask = TRUE)
+        bo2_crop <- crop(bo2_atm, mgmt_hull)
+        bo2_crop <- mask(bo2_crop, mgmt_hull) #when mask = TRUE above returns blank output. Running separately to solve
         bo2_kpa <- bo2_crop*101.325
-        bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
+        bto_crop <- crop(bto, mgmt_hull)
+        bto_crop <- mask(bto_crop, mgmt_hull)
   
         #calculate mi
         mi <- MI_calc_ES(A0 = A0, DO = bo2_kpa, E0 = E0, T_C = bto_crop)

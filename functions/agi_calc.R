@@ -35,8 +35,10 @@ AGI <- function(sp_name, weight = NULL, enviro, take_median = TRUE){ #consider a
         mgmt_hull <- mgmt_hull[mgmt_hull$elevation == 1,]
 
         #crop enviro files to management zone
-        bo2_crop <- crop(bo2_atm, mgmt_hull, mask = TRUE)
-        bto_crop <- crop(bto, mgmt_hull, mask = TRUE)
+        bo2_crop <- crop(bo2_atm, mgmt_hull) #mask = true sometimes returning blank plot. Could be bug but running separate for now.
+        bo2_crop <- mask(bo2_crop, mgmt_hull)
+        bto_crop <- crop(bto, mgmt_hull) #mask = true sometimes returning blank plot. Could be bug but running separate for now.
+        bto_crop <- mask(bto_crop, mgmt_hull)
   
       #get region specific agi coefs
         region_coef <- data.frame(
